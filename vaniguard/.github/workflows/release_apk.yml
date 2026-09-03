@@ -2,9 +2,18 @@ name: Build and Release Flutter APK
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-apk:
@@ -26,48 +35,86 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          flutter-version: '3.24.x'
+          flutter-version: '3.24.5'
           cache: true
 
       - name: Get Dependencies
         run: |
-          cd app
+          cd vaniguard/app
           flutter pub get
+
+      - name: Analyze Code
+        run: |
+          cd vaniguard/app
+          flutter analyze --no-fatal-infos
+
+      - name: Run Flutter Tests
+        run: |
+          cd vaniguard/app
+          flutter test
 
       - name: Build Release APK
         run: |
-          cd app
+          cd vaniguard/app
           flutter build apk --release
 
-      - name: Build Debug APK
+      - name: Prepare Named APK Artifact
         run: |
-          cd app
-          flutter build apk --debug
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          cp vaniguard/app/build/app/outputs/flutter-apk/app-release.apk vaniguard/app/build/app/outputs/flutter-apk/vaniguard-${SHORT_SHA}.apk
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: vaniguard-${{ github.sha }}
+          path: vaniguard/app/build/app/outputs/flutter-apk/vaniguard-*.apk
+          if-no-files-found: error
+          retention-days: 14
 
       - name: Create Release & Upload APKs
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
         with:
           name: VaniGuard Mobile Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref_name || 'v1.0.0-latest' }}
+          tag_name: ${{ github.ref_name || 'v1.0.6' }}
           draft: false
           prerelease: false
           files: |
-            app/build/app/outputs/flutter-apk/app-release.apk
-            app/build/app/outputs/flutter-apk/app-debug.apk
+            vaniguard/app/build/app/outputs/flutter-apk/app-release.apk
+            vaniguard/app/build/app/outputs/flutter-apk/vaniguard-*.apk
           body: |
-            ## VaniGuard Android Release
+            ## VaniGuard Android Mobile Release
             
-            Download the pre-compiled `.apk` files directly to install VaniGuard on any Android device without needing USB/ADB!
+            Pre-compiled `.apk` packages for VaniGuard voice-first secure banking platform.
             
             ### Package Files:
-            - **`app-release.apk`**: Optimized production release build.
-            - **`app-debug.apk`**: Debug build for testing.
+            - **`app-release.apk`**: Production release build with Quiet Vault theme.
+            - **`vaniguard-${{ github.sha }}.apk`**: SHA-pinned release build.
             
-            ### Quick Install Steps on Any Android Phone:
-            1. Open this GitHub Release page in your phone browser.
+            ### Installation Instructions:
+            1. Open this page on your Android test phone.
             2. Download `app-release.apk`.
-            3. Tap the downloaded file to install (allow "Install from Unknown Sources" if prompted).
-            4. Launch **VaniGuard** on your phone!
+            3. Tap the file to install (allow *Unknown Sources* if prompted).
+            4. Launch **VaniGuard**!
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate Job Summary
+        if: always()
+        run: |
+          echo "### VaniGuard Android Release Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit**: \`${{ github.sha }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Ref**: \`${{ github.ref }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Java**: JDK 17 (Eclipse Temurin)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Gradle**: 8.11.1 (Wrapper)" >> $GITHUB_STEP_SUMMARY
+          echo "- **AGP**: 8.7.0" >> $GITHUB_STEP_SUMMARY
+          echo "- **Kotlin**: 2.1.0" >> $GITHUB_STEP_SUMMARY
+          echo "- **Flutter**: 3.24.5 (Channel stable)" >> $GITHUB_STEP_SUMMARY
+          if [ -f "vaniguard/app/build/app/outputs/flutter-apk/app-release.apk" ]; then
+            SIZE=$(ls -lh vaniguard/app/build/app/outputs/flutter-apk/app-release.apk | awk '{print $5}')
+            echo "- **APK Path**: \`vaniguard/app/build/app/outputs/flutter-apk/app-release.apk\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **APK Size**: \`$SIZE\`" >> $GITHUB_STEP_SUMMARY
+            echo "- **Status**: Succeeded" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- **Status**: Failed" >> $GITHUB_STEP_SUMMARY
+          fi

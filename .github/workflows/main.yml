@@ -1,73 +1,12 @@
-name: Build and Release Flutter APK
+name: Legacy APK Workflow (Disabled)
 
 on:
-  push:
-    tags:
-      - 'v*'
   workflow_dispatch:
 
+# Note: The active CI/CD workflow for VaniGuard APK release builds is located at .github/workflows/release_apk.yml.
 jobs:
-  build-apk:
-    name: Build Android APK Release
+  deprecated-stub:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'temurin'
-          java-version: '17'
-          cache: 'gradle'
-
-      - name: Set up Flutter SDK
-        uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-          flutter-version: '3.24.x'
-          cache: true
-
-      - name: Get Dependencies
-        run: |
-          cd app
-          flutter pub get
-
-      - name: Build Release APK
-        run: |
-          cd app
-          flutter build apk --release
-
-      - name: Build Debug APK
-        run: |
-          cd app
-          flutter build apk --debug
-
-      - name: Create Release & Upload APKs
-        uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/') || github.event_name == 'workflow_dispatch'
-        with:
-          name: VaniGuard Mobile Release ${{ github.ref_name }}
-          tag_name: ${{ github.ref_name || 'v1.0.0-latest' }}
-          draft: false
-          prerelease: false
-          files: |
-            app/build/app/outputs/flutter-apk/app-release.apk
-            app/build/app/outputs/flutter-apk/app-debug.apk
-          body: |
-            ## VaniGuard Android Release
-            
-            Download the pre-compiled `.apk` files directly to install VaniGuard on any Android device without needing USB/ADB!
-            
-            ### Package Files:
-            - **`app-release.apk`**: Optimized production release build.
-            - **`app-debug.apk`**: Debug build for testing.
-            
-            ### Quick Install Steps on Any Android Phone:
-            1. Open this GitHub Release page in your phone browser.
-            2. Download `app-release.apk`.
-            3. Tap the downloaded file to install (allow "Install from Unknown Sources" if prompted).
-            4. Launch **VaniGuard** on your phone!
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Notice
+        run: echo "This workflow is superseded by .github/workflows/release_apk.yml."

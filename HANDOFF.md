@@ -167,3 +167,23 @@ HI: "आपकी सुरक्षा के लिए, हम इस ट्�
 Speaker threshold 0.68. 256-d embeddings. AES-256-GCM. 30-min
 cooling. 6-digit spoken challenge. Audio purged <500ms. Model cold
 start 7.07s (fix: persistent worker).
+
+## 10. CI/CD WORKFLOW AND ANDROID BUILD MATRIX
+The GitHub Actions workflow (.github/workflows/release_apk.yml) automates
+building and releasing the production Android APK on every push to main,
+version tag (v*), and manual dispatch.
+
+VERSION MATRIX:
+- Java JDK: 17 (Eclipse Temurin)
+- Gradle: 8.11.1 (via gradle-wrapper.properties)
+- Android Gradle Plugin (AGP): 8.7.0 (via settings.gradle.kts)
+- Kotlin: 2.1.0 (via settings.gradle.kts)
+- Flutter SDK: 3.24.5 (channel stable)
+- Compile SDK: 34 / 35 (with subproject fallback)
+- Min SDK: 23
+
+WORKFLOW PIPELINE:
+Checkout -> Java 17 -> Flutter 3.24.5 -> flutter pub get ->
+flutter analyze -> flutter test -> flutter build apk --release ->
+Upload vaniguard-<sha>.apk artifact -> GitHub Release.
+
