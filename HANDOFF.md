@@ -181,7 +181,8 @@ VERSION MATRIX:
 - Flutter SDK: 3.24.5 (channel stable)
 - Compile SDK: 36
 - Target SDK: 36
-- Min SDK: 23
+- Min SDK: 24
+- NDK: 27.0.12077973
 - speech_to_text: 7.4.0
 - flutter_tts: 4.2.5
 - record: 5.2.0 (with record_android 1.3.3)
