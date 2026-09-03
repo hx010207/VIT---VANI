@@ -1,3 +1,6 @@
+# PURPOSE: Unit tests for the 5-signal risk calculation and decision band boundaries.
+# ROLE IN SYSTEM: Verifies scoring thresholds for PROCEED (0-39), SOFT_VERIFY (40-69), CIRCUIT_BREAK (70+).
+# TALKS TO: server/app/services/risk_engine.py, server/app/models/schemas.py
 import pytest
 import numpy as np
 from server.app.models.schemas import RiskEngineInput, RiskBandEnum

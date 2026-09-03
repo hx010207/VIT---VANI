@@ -1,3 +1,6 @@
+/// PURPOSE: Spoken challenge-response UI presented when risk falls into SOFT_VERIFY band.
+/// ROLE IN SYSTEM: Displays 6-digit code and prompts user to speak digits for liveness verification.
+/// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';

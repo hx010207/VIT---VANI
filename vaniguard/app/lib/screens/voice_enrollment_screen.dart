@@ -1,3 +1,6 @@
+/// PURPOSE: Guided 3-phrase voice enrollment onboarding flow for new users.
+/// ROLE IN SYSTEM: Captures enrollment phrases and displays SNR and duration quality feedback.
+/// TALKS TO: app/lib/router.dart, app/lib/widgets/voice_waveform.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';

@@ -1,3 +1,6 @@
+# PURPOSE: Schema seed update utility syncing JSON lexicon files into SQL migration seeds.
+# ROLE IN SYSTEM: Re-generates SQL insert statements for scam_lexicon from JSON source assets.
+# TALKS TO: worker/scam_lexicon.*.json, migrations/001_initial_schema.sql
 import json
 from pathlib import Path
 

@@ -1,3 +1,7 @@
+# PURPOSE: Background asynchronous task runner using ARQ Redis with in-process queue fallback.
+# ROLE IN SYSTEM: Executes offloaded speech transcription, embedding computation, and risk jobs.
+# TALKS TO: worker/in_process_queue.py, worker/providers/, worker/dsp.py
+# DO NOT CONFUSE WITH: server/app/services/sweeper.py (cooling window timeout sweeper)
 import asyncio
 from typing import Dict, Any, List, Optional
 import numpy as np

@@ -1,3 +1,6 @@
+# PURPOSE: Historical transaction and audit ledger entry inspection endpoints.
+# ROLE IN SYSTEM: Returns immutable double-entry transaction history for authenticated accounts.
+# TALKS TO: server/app/database.py, server/app/models/schemas.py
 from fastapi import APIRouter, Query
 from typing import List, Optional, Dict, Any
 import uuid

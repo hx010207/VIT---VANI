@@ -1,5 +1,9 @@
 # VaniGuard API Reference
 
+> **Summary**: Comprehensive reference of all 25 REST endpoints and WebSocket protocols in VaniGuard.
+> **When to read**: Consult when integrating frontend clients or modifying backend service contracts.
+
+
 The VaniGuard API provides RESTful endpoints for transactional banking, biometric onboarding, trusted contact governance, and administrative auditing, alongside a high-performance WebSocket protocol for real-time conversational voice sessions.
 
 Base URL: `http://localhost:8000/api/v1`

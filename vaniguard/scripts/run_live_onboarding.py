@@ -1,3 +1,6 @@
+# PURPOSE: Automated runner executing Phase 2 live user onboarding and voice enrollment.
+# ROLE IN SYSTEM: Verifies Supabase signup, DPDP consents, quality gating, and encrypted storage.
+# TALKS TO: server/app/api/v1/onboarding.py, server/app/api/v1/payees.py, server/app/database.py
 import sys
 import uuid
 import datetime

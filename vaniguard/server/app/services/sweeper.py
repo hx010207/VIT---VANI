@@ -1,3 +1,7 @@
+# PURPOSE: Background asynchronous sweeper for expired cooling windows on held transfers.
+# ROLE IN SYSTEM: Periodically checks HELD transfers and auto-cancels those exceeding 30 minutes.
+# TALKS TO: server/app/database.py, server/app/services/audit.py, server/app/main.py
+# DO NOT CONFUSE WITH: worker/worker.py (general distributed job worker)
 import asyncio
 import datetime
 import structlog

@@ -1,5 +1,9 @@
 # VaniGuard Architecture Specification
 
+> **Summary**: System architecture documentation covering the voice biometric, risk engine, and ledger planes.
+> **When to read**: Consult to understand end-to-end data flow, system boundaries, and design invariants.
+
+
 VaniGuard is a voice-first secure banking platform engineered for elderly, visually impaired, and first-time digital banking users. It embeds a real-time Coercion Risk Engine directly into voice interactions, safeguarding vulnerable individuals against digital arrest scams, impersonation fraud, and coerced fund transfers.
 
 ## 1. System Topology

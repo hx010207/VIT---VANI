@@ -1,3 +1,6 @@
+/// PURPOSE: Dedicated portal screen for designated trusted contacts to review HELD transfers.
+/// ROLE IN SYSTEM: Provides out-of-band attested review controls to approve or deny held transfers.
+/// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';

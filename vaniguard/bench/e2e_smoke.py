@@ -1,3 +1,6 @@
+# PURPOSE: 8-step live integration smoke test validating the complete money and security path.
+# ROLE IN SYSTEM: Executes end-to-end checks against live Supabase PostgreSQL and authentication.
+# TALKS TO: server/app/main.py, server/app/services/ledger.py, server/app/database.py
 import sys
 import uuid
 import time

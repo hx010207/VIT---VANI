@@ -1,3 +1,6 @@
+# PURPOSE: Unit tests for authentication compliance, token rejection, and JWKS validation.
+# ROLE IN SYSTEM: Verifies that missing, expired, and forged tokens are rejected with HTTP 401.
+# TALKS TO: server/app/api/deps.py, server/app/api/v1/auth.py
 import pytest
 import uuid
 import datetime

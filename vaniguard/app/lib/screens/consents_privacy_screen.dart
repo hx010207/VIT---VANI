@@ -1,3 +1,6 @@
+/// PURPOSE: DPDP Act 2023 consent management and privacy settings screen.
+/// ROLE IN SYSTEM: Allows user to review and manage purpose-specific voice biometric consents.
+/// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';

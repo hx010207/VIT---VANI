@@ -1,3 +1,6 @@
+# PURPOSE: Ephemeral 6-digit challenge code generator and verification engine.
+# ROLE IN SYSTEM: Verifies digit transcription matching, acoustic liveness, and speaker similarity.
+# TALKS TO: worker/dsp.py, worker/providers/speaker_provider.py, server/app/models/schemas.py
 import uuid
 import random
 import datetime

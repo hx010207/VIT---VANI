@@ -1,3 +1,6 @@
+# PURPOSE: User onboarding, DPDP consent grants, and 3-phrase voice biometric enrollment.
+# ROLE IN SYSTEM: Quality-gates voice samples, creates encrypted voiceprints, sets acoustic baseline.
+# TALKS TO: server/app/services/crypto.py, worker/providers/speaker_provider.py, server/app/database.py
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import List, Optional, Dict, Any

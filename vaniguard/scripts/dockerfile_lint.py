@@ -1,3 +1,6 @@
+# PURPOSE: Static validation tool inspecting Dockerfiles for security and packaging compliance.
+# ROLE IN SYSTEM: Verifies non-root user execution, cache pinning, and multi-stage build rules.
+# TALKS TO: server/Dockerfile, worker/Dockerfile
 import os
 import sys
 import yaml

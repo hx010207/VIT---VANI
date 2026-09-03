@@ -1,3 +1,7 @@
+# PURPOSE: Strict double-entry accounting ledger engine with atomic balance verification.
+# ROLE IN SYSTEM: Executes transactional debit/credit commits and enforces idempotency replay safety.
+# TALKS TO: server/app/database.py, server/app/services/audit.py, server/app/models/schemas.py
+# DO NOT CONFUSE WITH: server/app/services/audit.py (general security audit log)
 import uuid
 import datetime
 import json

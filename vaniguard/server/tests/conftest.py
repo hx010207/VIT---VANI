@@ -1,3 +1,6 @@
+# PURPOSE: Pytest test fixtures, database mocking, and test client configurations.
+# ROLE IN SYSTEM: Sets up clean in-memory database state and authentication mocks for test suite.
+# TALKS TO: pytest, server/app/database.py, server/app/main.py
 import sys
 from pathlib import Path
 

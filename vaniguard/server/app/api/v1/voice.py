@@ -1,3 +1,6 @@
+# PURPOSE: Spoken challenge-response generation and acoustic liveness verification endpoints.
+# ROLE IN SYSTEM: Handles 6-digit challenge flow required when risk falls in SOFT_VERIFY band.
+# TALKS TO: server/app/services/challenge.py, server/app/services/crypto.py, worker/dsp.py
 from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 from typing import Optional, List

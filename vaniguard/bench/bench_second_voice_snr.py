@@ -1,3 +1,6 @@
+# PURPOSE: Benchmark measuring second voice detection sensitivity across varying noise floors.
+# ROLE IN SYSTEM: Tests pitch autocorrelation and secondary speaker identification accuracy.
+# TALKS TO: worker/dsp.py, server/app/services/risk_engine.py
 import sys
 import numpy as np
 from pathlib import Path

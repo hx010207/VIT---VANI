@@ -1,3 +1,6 @@
+# PURPOSE: Administrative configuration and risk signal threshold adjustment endpoints.
+# ROLE IN SYSTEM: Allows service-role inspection and dynamic tuning of risk signal weights.
+# TALKS TO: server/app/database.py, server/app/services/risk_engine.py
 from fastapi import APIRouter, Query
 from typing import Optional, List, Dict, Any
 from server.app.services.audit import audit_service

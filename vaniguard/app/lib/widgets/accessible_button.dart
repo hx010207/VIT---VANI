@@ -1,3 +1,6 @@
+/// PURPOSE: High-contrast touch target widget meeting accessibility guidelines.
+/// ROLE IN SYSTEM: Provides 64dp minimum touch target buttons for elderly and visually impaired users.
+/// TALKS TO: app/lib/theme/quiet_vault_theme.dart, app/lib/screens/
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 

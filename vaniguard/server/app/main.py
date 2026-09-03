@@ -1,3 +1,7 @@
+# PURPOSE: FastAPI application entrypoint, middleware configuration, and lifecycle management.
+# ROLE IN SYSTEM: Boots HTTP/WS server, initializes cooling sweeper loop, mounts API routers.
+# TALKS TO: server/app/config.py, server/app/api/v1/, server/app/services/sweeper.py
+# DO NOT CONFUSE WITH: worker/worker.py (background queue processor)
 import uuid
 import asyncio
 from contextlib import asynccontextmanager

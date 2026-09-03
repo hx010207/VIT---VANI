@@ -1,3 +1,6 @@
+# PURPOSE: Test suite verifying PostgreSQL Row-Level Security rules and isolation boundaries.
+# ROLE IN SYSTEM: Confirms users can only read their own financial records and authorized transfers.
+# TALKS TO: migrations/001_initial_schema.sql, server/app/database.py
 import pytest
 import re
 from pathlib import Path

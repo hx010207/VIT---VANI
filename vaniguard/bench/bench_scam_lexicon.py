@@ -1,3 +1,6 @@
+# PURPOSE: Benchmark evaluating coercion script lexicon matching against test utterances.
+# ROLE IN SYSTEM: Measures keyword recall, weighting accuracy, and false-positive boundaries.
+# TALKS TO: worker/scam_lexicon.en.json, worker/scam_lexicon.hi.json, server/app/services/risk_engine.py
 import json
 import sys
 from pathlib import Path

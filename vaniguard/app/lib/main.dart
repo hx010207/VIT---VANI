@@ -1,3 +1,6 @@
+/// PURPOSE: Flutter mobile application entrypoint and root widget initialization.
+/// ROLE IN SYSTEM: Initializes MaterialApp, applies Quiet Vault theme, and mounts AppRouter.
+/// TALKS TO: app/lib/router.dart, app/lib/theme/quiet_vault_theme.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';

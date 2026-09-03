@@ -1,3 +1,6 @@
+# PURPOSE: FastAPI dependency injection for Supabase JWT authentication and JWKS token verification.
+# ROLE IN SYSTEM: Validates ES256/HS256 tokens and extracts authenticated user identities.
+# TALKS TO: server/app/config.py, FastAPI endpoints in server/app/api/v1/
 from fastapi import Depends, HTTPException, Header, status
 from typing import Optional, Dict, Any
 import jwt

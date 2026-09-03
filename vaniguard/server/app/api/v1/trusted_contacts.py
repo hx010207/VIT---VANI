@@ -1,3 +1,6 @@
+# PURPOSE: Management endpoints for account holder and trusted contact trust relationships.
+# ROLE IN SYSTEM: Enrolls trusted contacts, sets notification thresholds in paise, and lists links.
+# TALKS TO: server/app/database.py, server/app/models/schemas.py
 from fastapi import APIRouter, HTTPException, Request
 from typing import List, Optional
 import uuid

@@ -1,3 +1,6 @@
+/// PURPOSE: Persistent banner widget alerting users when network connectivity is lost.
+/// ROLE IN SYSTEM: Informs user that voice sessions require secure connectivity to proceed.
+/// TALKS TO: app/lib/theme/quiet_vault_theme.dart, app/lib/screens/
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 

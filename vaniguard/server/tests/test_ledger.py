@@ -1,3 +1,6 @@
+# PURPOSE: Unit tests for double-entry ledger correctness, balance checks, and idempotency.
+# ROLE IN SYSTEM: Proves money invariants, atomic debit/credit balancing, and duplicate key safety.
+# TALKS TO: server/app/services/ledger.py, server/app/database.py
 import pytest
 import uuid
 from server.app.database import db

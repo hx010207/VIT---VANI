@@ -1,5 +1,9 @@
 # VaniGuard — Empirical Verification and Benchmark Report
 
+> **Summary**: Empirical benchmark results and methodologies for latency, speaker verification, and DSP.
+> **When to read**: Consult when evaluating system performance budgets or reproducing benchmark claims.
+
+
 This document records the empirical performance benchmarks executed across all biometric, acoustic, linguistic, and latency subsystems.
 
 ## 1. Latency Budget Benchmark

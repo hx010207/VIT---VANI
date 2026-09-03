@@ -1,3 +1,6 @@
+# PURPOSE: Real-time bidirectional WebSocket voice session router (/ws/voice-session).
+# ROLE IN SYSTEM: Streams PCM audio, emits partial/final transcripts, risk updates, and mode events.
+# TALKS TO: server/app/services/risk_engine.py, worker/dsp.py, worker/providers/speaker_provider.py
 import json
 import uuid
 import datetime

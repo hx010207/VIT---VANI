@@ -1,3 +1,6 @@
+/// PURPOSE: Protective intervention screen displayed when risk triggers CIRCUIT_BREAK.
+/// ROLE IN SYSTEM: Displays mandated bilingual calm copy, cooling countdown, and cancellation button.
+/// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';

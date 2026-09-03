@@ -1,3 +1,6 @@
+/// PURPOSE: Quiet Vault design system theme definitions, typography, and color tokens.
+/// ROLE IN SYSTEM: Enforces deep green (#1B4332), ivory (#FAF7F0), brass (#B08968), and 18sp text.
+/// TALKS TO: app/lib/main.dart, app/lib/widgets/, app/lib/screens/
 import 'package:flutter/material.dart';
 
 class QuietVaultColors {

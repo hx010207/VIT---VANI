@@ -1,3 +1,6 @@
+# PURPOSE: Pydantic schemas, request/response models, and enums for all API operations.
+# ROLE IN SYSTEM: Enforces data contracts, transfer states, risk bands, and explainability payloads.
+# TALKS TO: server/app/api/v1/, server/app/services/risk_engine.py, worker/providers/
 from pydantic import BaseModel, Field, model_validator
 from typing import List, Optional, Dict, Any
 from enum import Enum

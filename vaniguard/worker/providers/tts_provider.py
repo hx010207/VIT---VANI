@@ -1,3 +1,7 @@
+# PURPOSE: Text-to-Speech synthesis provider interface and calm guidance audio generator.
+# ROLE IN SYSTEM: Synthesizes prompts and protective bilingual copy for voice banking responses.
+# TALKS TO: server/app/api/v1/websocket.py, worker/worker.py
+# DO NOT CONFUSE WITH: worker/providers/asr_provider.py (speech-to-text transcriber)
 from abc import ABC, abstractmethod
 from typing import Dict, Any, Optional
 import numpy as np

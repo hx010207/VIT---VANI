@@ -1,3 +1,7 @@
+# PURPOSE: Database connection management and unified fallback layer for PostgreSQL and memory.
+# ROLE IN SYSTEM: Provides pooled PostgreSQL cursors with thread-safe in-memory mirror fallback.
+# TALKS TO: server/app/config.py, psycopg2 pool, all API routers and services
+# DO NOT CONFUSE WITH: server/app/services/ledger.py (ledger domain logic)
 import os
 import uuid
 import datetime

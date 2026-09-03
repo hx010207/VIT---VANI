@@ -1,0 +1,98 @@
+# VaniGuard: Repository File Map
+
+> **Notice for AI Agents and Engineers**: Read this file first to locate relevant modules before opening source files.
+
+## Project Tree and File Purpose Index
+
+- `.env`: Local environment secret configuration file (never committed to git).
+- `.env.example`: Template environment variables file showing required keys and format.
+- `.gitignore`: Git ignore rules for caches, virtual environments, models, and secrets.
+- `app/lib/l10n/app_en.arb`: English localization strings dictionary defining UI labels, prompts, and mandated calm guidance....
+- `app/lib/l10n/app_hi.arb`: Hindi localization strings dictionary defining UI labels, prompts, and mandated calm guidance. RO...
+- `app/lib/main.dart`: Flutter mobile application entrypoint and root widget initialization.
+- `app/lib/router.dart`: Declarative route definitions and navigation management for the Flutter client.
+- `app/lib/screens/banking_dashboard_screen.dart`: Main banking dashboard display showing balance in paise and recent activity.
+- `app/lib/screens/challenge_verification_screen.dart`: Spoken challenge-response UI presented when risk falls into SOFT_VERIFY band.
+- `app/lib/screens/consents_privacy_screen.dart`: DPDP Act 2023 consent management and privacy settings screen.
+- `app/lib/screens/risk_monitor_screen.dart`: Real-time explainability monitor visualizing the 5 coercion risk signals.
+- `app/lib/screens/transfer_held_screen.dart`: Protective intervention screen displayed when risk triggers CIRCUIT_BREAK.
+- `app/lib/screens/trusted_contact_portal_screen.dart`: Dedicated portal screen for designated trusted contacts to review HELD transfers.
+- `app/lib/screens/voice_enrollment_screen.dart`: Guided 3-phrase voice enrollment onboarding flow for new users.
+- `app/lib/screens/voice_session_screen.dart`: Active conversational voice banking session interface over WebSocket.
+- `app/lib/theme/quiet_vault_theme.dart`: Quiet Vault design system theme definitions, typography, and color tokens.
+- `app/lib/widgets/accessible_button.dart`: High-contrast touch target widget meeting accessibility guidelines.
+- `app/lib/widgets/offline_banner.dart`: Persistent banner widget alerting users when network connectivity is lost.
+- `app/lib/widgets/voice_waveform.dart`: Real-time animated acoustic waveform visualizer widget.
+- `app/pubspec.yaml`: Flutter project dependencies, asset registrations, and app metadata.
+- `bench/bench_challenge_verification.py`: Benchmark suite for the 6-digit challenge response verification engine.
+- `bench/bench_latency_budget.py`: End-to-end latency benchmark measuring post-chunk risk and ledger commit timings.
+- `bench/bench_scam_lexicon.py`: Benchmark evaluating coercion script lexicon matching against test utterances.
+- `bench/bench_second_voice_snr.py`: Benchmark measuring second voice detection sensitivity across varying noise floors.
+- `bench/bench_speaker_verification.py`: Benchmark measuring speaker verification cosine similarity and threshold stability.
+- `bench/e2e_smoke.py`: 8-step live integration smoke test validating the complete money and security path.
+- `bench/fixtures/scam_eval_dataset.json`: Evaluation dataset containing benchmark coercion utterances and transcripts.
+- `bench/smoke_websocket.py`: Lightweight sanity script for validating WebSocket session handshakes and responses.
+- `docker-compose.yml`: Docker Compose service definitions for orchestrating the VaniGuard backend stack.
+- `docs/API.md`: Comprehensive reference of all 25 REST endpoints and WebSocket protocols in VaniGuard.
+- `docs/ARCHITECTURE.md`: System architecture documentation covering the voice biometric, risk engine, and ledger planes.
+- `docs/BENCHMARKS.md`: Empirical benchmark results and methodologies for latency, speaker verification, and DSP.
+- `docs/COMPLIANCE.md`: Regulatory compliance specification aligning platform controls with the DPDP Act 2023.
+- `docs/FILE_MAP.md`: Documentation file covering FILE_MAP.
+- `docs/MODEL_CARD.md`: Machine learning model card detailing Faster-Whisper and ECAPA-TDNN operational specs.
+- `Makefile`: Development task orchestration definitions for linting, testing, and running services.
+- `migrations/001_initial_schema.sql`: Primary PostgreSQL database schema migration establishing tables, triggers, and RLS.
+- `pyproject.toml`: Project dependency specifications, metadata, and build configurations.
+- `pytest.ini`: Pytest configuration defining test discovery patterns and options.
+- `RULES.md`: Development rules, security constraints, and coding invariants for VaniGuard.
+- `scripts/apply_file_headers.py`: Automated script that prepends standardized file purpose headers across the codebase.
+- `scripts/audit_lexicon.py`: Verification utility for auditing coercion lexicon entries for duplicates and weights.
+- `scripts/dockerfile_lint.py`: Static validation tool inspecting Dockerfiles for security and packaging compliance.
+- `scripts/generate_file_map.py`: Generator script creating docs/FILE_MAP.md indexing all files and single-sentence purposes.
+- `scripts/headers_data.py`: Structured catalog of purpose headers, roles, dependencies, and documentation summaries.
+- `scripts/migrate_supabase.py`: Database migration runner applying SQL schemas and seeds to remote Supabase instances.
+- `scripts/run_live_onboarding.py`: Automated runner executing Phase 2 live user onboarding and voice enrollment.
+- `scripts/run_live_voice_sessions.py`: Automated runner executing Phase 3 live WebSocket voice sessions and session matrix.
+- `scripts/update_schema_seeds.py`: Schema seed update utility syncing JSON lexicon files into SQL migration seeds.
+- `scripts/verify_auth_proof.py`: Security verification script proving JWKS token validation and signature enforcement.
+- `server/app/api/deps.py`: FastAPI dependency injection for Supabase JWT authentication and JWKS token verification.
+- `server/app/api/v1/accounts.py`: Account balance queries and account summary endpoints.
+- `server/app/api/v1/admin.py`: Administrative configuration and risk signal threshold adjustment endpoints.
+- `server/app/api/v1/auth.py`: Authentication helper endpoints, JWT token verification, and session inspection.
+- `server/app/api/v1/onboarding.py`: User onboarding, DPDP consent grants, and 3-phrase voice biometric enrollment.
+- `server/app/api/v1/payees.py`: Payee registration, nickname lookup, and trusted payee listing endpoints.
+- `server/app/api/v1/tc_actions.py`: Trusted contact review endpoints for pending held transfers.
+- `server/app/api/v1/transactions.py`: Historical transaction and audit ledger entry inspection endpoints.
+- `server/app/api/v1/transfers.py`: Money transfer initiation, idempotency control, and risk band enforcement.
+- `server/app/api/v1/trusted_contacts.py`: Management endpoints for account holder and trusted contact trust relationships.
+- `server/app/api/v1/voice.py`: Spoken challenge-response generation and acoustic liveness verification endpoints.
+- `server/app/api/v1/websocket.py`: Real-time bidirectional WebSocket voice session router (/ws/voice-session).
+- `server/app/config.py`: Centralized configuration and environment variable validation using Pydantic Settings.
+- `server/app/database.py`: Database connection management and unified fallback layer for PostgreSQL and memory.
+- `server/app/main.py`: FastAPI application entrypoint, middleware configuration, and lifecycle management.
+- `server/app/models/schemas.py`: Pydantic schemas, request/response models, and enums for all API operations.
+- `server/app/services/audit.py`: Tamper-evident append-only audit logging service for regulatory compliance.
+- `server/app/services/challenge.py`: Ephemeral 6-digit challenge code generator and verification engine.
+- `server/app/services/crypto.py`: Cryptographic service for AES-256-GCM envelope encryption and KMS key derivation.
+- `server/app/services/ledger.py`: Strict double-entry accounting ledger engine with atomic balance verification.
+- `server/app/services/risk_engine.py`: 5-signal coercion risk engine computing 0-100 scores and explainability payloads.
+- `server/app/services/sweeper.py`: Background asynchronous sweeper for expired cooling windows on held transfers.
+- `server/Dockerfile`: Multi-stage container definition for the VaniGuard FastAPI gateway service.
+- `server/tests/conftest.py`: Pytest test fixtures, database mocking, and test client configurations.
+- `server/tests/test_auth_compliance.py`: Unit tests for authentication compliance, token rejection, and JWKS validation.
+- `server/tests/test_fairness_invariants.py`: Invariant verification ensuring zero demographic bias in coercion risk scoring.
+- `server/tests/test_ledger.py`: Unit tests for double-entry ledger correctness, balance checks, and idempotency.
+- `server/tests/test_risk_engine.py`: Unit tests for the 5-signal risk calculation and decision band boundaries.
+- `server/tests/test_rls_policies.py`: Test suite verifying PostgreSQL Row-Level Security rules and isolation boundaries.
+- `server/tests/test_sweeper.py`: Unit tests for cooling window expiration and auto-cancellation logic.
+- `worker/__init__.py`: Package initialization for background audio processing and ML inference worker.
+- `worker/Dockerfile`: Container definition for the background ML inference and audio DSP worker service.
+- `worker/dsp.py`: Digital signal processing algorithms for acoustic analysis and voice metrics.
+- `worker/in_process_queue.py`: Lightweight asyncio queue providing Redis-compatible job dispatch when Redis is absent.
+- `worker/prefetch_models.py`: Model pre-caching script to warm faster-whisper and ECAPA-TDNN assets at boot.
+- `worker/providers/__init__.py`: Provider interface exports for ASR, speaker biometrics, and TTS implementations.
+- `worker/providers/asr_provider.py`: Automated Speech Recognition provider abstract interface and Faster-Whisper adapter.
+- `worker/providers/speaker_provider.py`: Voice biometric provider computing 256-d speaker embeddings and cosine similarities.
+- `worker/providers/tts_provider.py`: Text-to-Speech synthesis provider interface and calm guidance audio generator.
+- `worker/scam_lexicon.en.json`: Curated English scam and coercion lexicon keywords with risk weights.
+- `worker/scam_lexicon.hi.json`: Curated Hindi scam and coercion lexicon keywords with risk weights.
+- `worker/worker.py`: Background asynchronous task runner using ARQ Redis with in-process queue fallback.

@@ -1,3 +1,6 @@
+# PURPOSE: Payee registration, nickname lookup, and trusted payee listing endpoints.
+# ROLE IN SYSTEM: Resolves spoken payee nicknames to account references during voice banking flows.
+# TALKS TO: server/app/database.py, server/app/models/schemas.py
 from fastapi import APIRouter, HTTPException, Request
 from typing import List, Optional
 import uuid

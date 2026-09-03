@@ -1,3 +1,6 @@
+# PURPOSE: Invariant verification ensuring zero demographic bias in coercion risk scoring.
+# ROLE IN SYSTEM: Asserts identical scores across simulated demographic attributes given same acoustics.
+# TALKS TO: server/app/services/risk_engine.py, server/app/models/schemas.py
 import pytest
 from pydantic import ValidationError
 from server.app.models.schemas import RiskEngineInput

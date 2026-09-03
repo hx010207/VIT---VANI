@@ -1,3 +1,6 @@
+# PURPOSE: Authentication helper endpoints, JWT token verification, and session inspection.
+# ROLE IN SYSTEM: Interacts with Supabase Auth JWKS to confirm user session validity.
+# TALKS TO: server/app/config.py, server/app/api/deps.py
 from fastapi import APIRouter, Header, HTTPException, Request
 from pydantic import BaseModel
 import uuid

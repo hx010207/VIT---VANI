@@ -1,3 +1,6 @@
+# PURPOSE: Model pre-caching script to warm faster-whisper and ECAPA-TDNN assets at boot.
+# ROLE IN SYSTEM: Eliminates per-request cold-start latency by downloading and preparing models.
+# TALKS TO: worker/providers/asr_provider.py, worker/providers/speaker_provider.py
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))

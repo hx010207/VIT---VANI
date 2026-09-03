@@ -1,3 +1,6 @@
+/// PURPOSE: Real-time explainability monitor visualizing the 5 coercion risk signals.
+/// ROLE IN SYSTEM: Displays score contributions, active decision band, and evidence summaries.
+/// TALKS TO: app/lib/theme/quiet_vault_theme.dart, app/lib/screens/voice_session_screen.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';

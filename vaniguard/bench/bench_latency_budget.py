@@ -1,3 +1,6 @@
+# PURPOSE: End-to-end latency benchmark measuring post-chunk risk and ledger commit timings.
+# ROLE IN SYSTEM: Reports true p95 timings against live Supabase PostgreSQL ledger.
+# TALKS TO: server/app/services/ledger.py, server/app/services/risk_engine.py
 import time
 import sys
 import uuid

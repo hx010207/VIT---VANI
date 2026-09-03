@@ -1,4 +1,7 @@
 {
+  "@_FILE_HEADER": {
+    "description": "PURPOSE: Hindi localization strings dictionary defining UI labels, prompts, and mandated calm guidance. ROLE IN SYSTEM: UI translation bundle. TALKS TO: app/lib/screens/."
+  },
   "@@locale": "hi",
   "appTitle": "वानीगार्ड",
   "voiceBanking": "आवाज से बैंकिंग",

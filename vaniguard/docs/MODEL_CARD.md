@@ -1,5 +1,9 @@
 # VaniGuard Model Card: Coercion Detection and Voice Biometrics Engine
 
+> **Summary**: Machine learning model card detailing Faster-Whisper and ECAPA-TDNN operational specs.
+> **When to read**: Consult to review acoustic model parameters, training baselines, and fairness invariants.
+
+
 ## 1. Model Details
 
 - **Name**: VaniGuard Coercion Detection & Biometrics Subsystem

@@ -1,3 +1,6 @@
+# PURPOSE: Unit tests for cooling window expiration and auto-cancellation logic.
+# ROLE IN SYSTEM: Validates that transfers held beyond 30 minutes are transitioned to CANCELLED.
+# TALKS TO: server/app/services/sweeper.py, server/app/database.py
 import pytest
 import uuid
 import datetime

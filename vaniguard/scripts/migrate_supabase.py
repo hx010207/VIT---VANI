@@ -1,3 +1,6 @@
+# PURPOSE: Database migration runner applying SQL schemas and seeds to remote Supabase instances.
+# ROLE IN SYSTEM: Connects to PostgreSQL to execute migrations/001_initial_schema.sql.
+# TALKS TO: migrations/001_initial_schema.sql, server/app/config.py
 import os
 import sys
 from pathlib import Path

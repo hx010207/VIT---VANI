@@ -1,3 +1,6 @@
+# PURPOSE: Lightweight asyncio queue providing Redis-compatible job dispatch when Redis is absent.
+# ROLE IN SYSTEM: Guarantees background worker functionality on hosts lacking a local Redis daemon.
+# TALKS TO: worker/worker.py, server/app/main.py
 import asyncio
 import uuid
 from typing import Any, Callable, Dict, Optional

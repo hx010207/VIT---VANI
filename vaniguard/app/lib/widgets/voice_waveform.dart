@@ -1,3 +1,6 @@
+/// PURPOSE: Real-time animated acoustic waveform visualizer widget.
+/// ROLE IN SYSTEM: Renders visual feedback during microphone capture and voice session streaming.
+/// TALKS TO: app/lib/theme/quiet_vault_theme.dart, app/lib/screens/voice_session_screen.dart
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';

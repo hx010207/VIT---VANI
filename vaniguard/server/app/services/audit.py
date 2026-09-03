@@ -1,3 +1,7 @@
+# PURPOSE: Tamper-evident append-only audit logging service for regulatory compliance.
+# ROLE IN SYSTEM: Records security events, consent changes, and ledger state transitions.
+# TALKS TO: server/app/database.py, server/app/config.py
+# DO NOT CONFUSE WITH: server/app/services/ledger.py (financial money-path ledger)
 import datetime
 from typing import Dict, Any, Optional
 from server.app.database import db

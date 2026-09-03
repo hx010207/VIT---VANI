@@ -1,3 +1,7 @@
+# PURPOSE: Automated Speech Recognition provider abstract interface and Faster-Whisper adapter.
+# ROLE IN SYSTEM: Transcribes incoming Hindi and English speech chunks to text with timestamps.
+# TALKS TO: worker/worker.py, server/app/api/v1/websocket.py
+# DO NOT CONFUSE WITH: worker/providers/tts_provider.py (speech synthesizer)
 from abc import ABC, abstractmethod
 from typing import Optional
 import io

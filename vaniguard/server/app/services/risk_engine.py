@@ -1,3 +1,6 @@
+# PURPOSE: 5-signal coercion risk engine computing 0-100 scores and explainability payloads.
+# ROLE IN SYSTEM: Evaluates second voice, vocal stress, mismatch, coercion script, and anomalies.
+# TALKS TO: worker/scam_lexicon.*.json, server/app/models/schemas.py, server/app/api/v1/websocket.py
 import os
 import json
 import numpy as np

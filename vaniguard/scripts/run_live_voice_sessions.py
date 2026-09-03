@@ -1,3 +1,6 @@
+# PURPOSE: Automated runner executing Phase 3 live WebSocket voice sessions and session matrix.
+# ROLE IN SYSTEM: Tests nominal flow, soft verification challenge, and circuit break with TC deny.
+# TALKS TO: server/app/api/v1/websocket.py, server/app/api/v1/voice.py, server/app/api/v1/tc_actions.py
 import sys
 import uuid
 import time

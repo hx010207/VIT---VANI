@@ -1,3 +1,6 @@
+# PURPOSE: Voice biometric provider computing 256-d speaker embeddings and cosine similarities.
+# ROLE IN SYSTEM: Evaluates enrollment quality gating and speaker identity matching against baseline.
+# TALKS TO: worker/dsp.py, server/app/services/risk_engine.py, server/app/api/v1/onboarding.py
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Tuple
 import numpy as np

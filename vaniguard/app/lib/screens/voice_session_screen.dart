@@ -1,3 +1,6 @@
+/// PURPOSE: Active conversational voice banking session interface over WebSocket.
+/// ROLE IN SYSTEM: Streams microphone audio, displays live transcripts, and handles band transitions.
+/// TALKS TO: app/lib/widgets/voice_waveform.dart, app/lib/screens/risk_monitor_screen.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';

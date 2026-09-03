@@ -1,3 +1,6 @@
+# PURPOSE: Benchmark suite for the 6-digit challenge response verification engine.
+# ROLE IN SYSTEM: Evaluates constrained digit decoding accuracy and acoustic liveness detection.
+# TALKS TO: server/app/services/challenge.py, worker/dsp.py
 import sys
 import numpy as np
 from pathlib import Path

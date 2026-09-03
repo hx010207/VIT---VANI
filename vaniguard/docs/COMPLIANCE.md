@@ -1,5 +1,9 @@
 # VaniGuard — Regulatory Compliance and Data Governance Specification
 
+> **Summary**: Regulatory compliance specification aligning platform controls with the DPDP Act 2023.
+> **When to read**: Consult when verifying consent management, data minimization, and audit requirements.
+
+
 This document details VaniGuard's alignment with the Digital Personal Data Protection (DPDP) Act 2023, Reserve Bank of India (RBI) master directions on digital payment security, and algorithmic fairness standards.
 
 ## 1. Digital Personal Data Protection (DPDP) Act 2023 Alignment

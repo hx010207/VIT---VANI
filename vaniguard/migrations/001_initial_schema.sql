@@ -1,3 +1,6 @@
+-- PURPOSE: Primary PostgreSQL database schema migration establishing tables, triggers, and RLS.
+-- ROLE IN SYSTEM: Creates 12 relational tables, double-entry ledger, immutable audit log, and RLS.
+-- TALKS TO: PostgreSQL, server/app/database.py, server/app/services/ledger.py
 -- VaniGuard Production Postgres Migration 001: Initial Schema
 -- Designed for Supabase Postgres with Row Level Security (RLS) and Immutable Audit Logging
 

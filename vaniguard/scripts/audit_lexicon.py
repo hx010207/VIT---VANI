@@ -1,3 +1,6 @@
+# PURPOSE: Verification utility for auditing coercion lexicon entries for duplicates and weights.
+# ROLE IN SYSTEM: Ensures scam lexicon integrity across English and Hindi definitions.
+# TALKS TO: worker/scam_lexicon.en.json, worker/scam_lexicon.hi.json
 import json
 import sys
 from collections import Counter

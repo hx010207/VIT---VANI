@@ -1,3 +1,6 @@
+# PURPOSE: Account balance queries and account summary endpoints.
+# ROLE IN SYSTEM: Serves authenticated account holder balances in paise and account metadata.
+# TALKS TO: server/app/database.py, server/app/models/schemas.py, server/app/api/deps.py
 from fastapi import APIRouter, HTTPException, Query
 from typing import List, Optional
 import uuid

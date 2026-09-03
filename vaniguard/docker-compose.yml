@@ -1,3 +1,6 @@
+# PURPOSE: Docker Compose service definitions for orchestrating the VaniGuard backend stack.
+# ROLE IN SYSTEM: Defines multi-container networking for the FastAPI gateway and background worker.
+# TALKS TO: server/Dockerfile, worker/Dockerfile
 version: "3.9"
 
 services:

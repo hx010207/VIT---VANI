@@ -1,3 +1,6 @@
+# PURPOSE: Security verification script proving JWKS token validation and signature enforcement.
+# ROLE IN SYSTEM: Confirms authentic tokens pass and forged or unauthenticated requests fail 401.
+# TALKS TO: server/app/api/deps.py, server/app/config.py
 import sys
 import uuid
 import datetime

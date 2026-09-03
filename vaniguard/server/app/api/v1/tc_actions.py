@@ -1,3 +1,6 @@
+# PURPOSE: Trusted contact review endpoints for pending held transfers.
+# ROLE IN SYSTEM: Allows trusted contacts to inspect HELD transfers and submit attested approve/deny.
+# TALKS TO: server/app/database.py, server/app/services/ledger.py, server/app/services/audit.py
 from fastapi import APIRouter, HTTPException, Request
 from typing import List, Optional
 import uuid

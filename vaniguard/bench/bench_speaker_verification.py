@@ -1,3 +1,6 @@
+# PURPOSE: Benchmark measuring speaker verification cosine similarity and threshold stability.
+# ROLE IN SYSTEM: Verifies true-accept and false-reject rates across enrolled voiceprints.
+# TALKS TO: worker/providers/speaker_provider.py, server/app/services/crypto.py
 import sys
 import numpy as np
 from pathlib import Path

@@ -1,3 +1,6 @@
+# PURPOSE: Digital signal processing algorithms for acoustic analysis and voice metrics.
+# ROLE IN SYSTEM: Computes SNR, clean speech duration, F0 pitch tracking, jitter, shimmer, and liveness.
+# TALKS TO: worker/providers/speaker_provider.py, server/app/services/risk_engine.py
 import numpy as np
 from scipy import signal
 from typing import Dict, Any, Tuple, Optional

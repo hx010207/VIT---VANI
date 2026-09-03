@@ -1,3 +1,6 @@
+/// PURPOSE: Declarative route definitions and navigation management for the Flutter client.
+/// ROLE IN SYSTEM: Maps URI routes to screens (dashboard, voice session, challenge, TC portal).
+/// TALKS TO: app/lib/screens/, app/lib/main.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/screens/banking_dashboard_screen.dart';
 import 'package:vaniguard/screens/voice_session_screen.dart';

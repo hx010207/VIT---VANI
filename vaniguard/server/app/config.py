@@ -1,3 +1,6 @@
+# PURPOSE: Centralized configuration and environment variable validation using Pydantic Settings.
+# ROLE IN SYSTEM: Loads Supabase URLs, KMS master keys, JWT secrets, thresholds, and band limits.
+# TALKS TO: server/app/main.py, server/app/database.py, server/app/services/
 import sys
 import json
 from typing import List, Optional, Union

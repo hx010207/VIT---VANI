@@ -1,3 +1,6 @@
+# PURPOSE: Cryptographic service for AES-256-GCM envelope encryption and KMS key derivation.
+# ROLE IN SYSTEM: Encrypts speaker biometric embeddings before storage and decrypts during verification.
+# TALKS TO: server/app/config.py, server/app/api/v1/onboarding.py, server/app/api/v1/voice.py
 import os
 import struct
 import base64

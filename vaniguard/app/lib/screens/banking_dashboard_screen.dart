@@ -1,3 +1,6 @@
+/// PURPOSE: Main banking dashboard display showing balance in paise and recent activity.
+/// ROLE IN SYSTEM: Primary interface presenting account status and launching voice banking sessions.
+/// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';

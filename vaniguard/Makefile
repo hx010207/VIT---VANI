@@ -1,3 +1,6 @@
+# PURPOSE: Development task orchestration definitions for linting, testing, and running services.
+# ROLE IN SYSTEM: Provides unified CLI commands for test execution, migrations, and service startup.
+# TALKS TO: pytest, uvicorn, docker-compose.yml
 .PHONY: help dev test lint bench models
 
 PYTHON := .venv/Scripts/python

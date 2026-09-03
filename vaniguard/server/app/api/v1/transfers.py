@@ -1,3 +1,6 @@
+# PURPOSE: Money transfer initiation, idempotency control, and risk band enforcement.
+# ROLE IN SYSTEM: Executes atomic double-entry ledger commits or holds high-risk transfers.
+# TALKS TO: server/app/services/ledger.py, server/app/services/risk_engine.py, server/app/database.py
 from fastapi import APIRouter, Header, HTTPException, Request, Depends
 from typing import Optional, List, Dict, Any
 import uuid

@@ -1,3 +1,6 @@
+# PURPOSE: Lightweight sanity script for validating WebSocket session handshakes and responses.
+# ROLE IN SYSTEM: Connects to /ws/voice-session and verifies welcome prompt delivery.
+# TALKS TO: server/app/api/v1/websocket.py
 import asyncio
 import json
 import sys
