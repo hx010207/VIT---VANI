@@ -60,8 +60,10 @@ jobs:
           flutter --version
           echo "=== Pub Dependencies ==="
           flutter pub deps
-          echo "=== Gradle Wrapper Version ==="
-          cd android && ./gradlew --version && cd ..
+          echo "=== Gradle Version ==="
+          gradle --version || true
+          echo "=== Gradle Wrapper Configuration ==="
+          cat android/gradle/wrapper/gradle-wrapper.properties
 
       - name: Build Release APK
         run: |
