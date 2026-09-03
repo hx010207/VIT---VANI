@@ -3,12 +3,6 @@ allprojects {
         google()
         mavenCentral()
     }
-    project.extra.set("flutter", mapOf(
-        "compileSdkVersion" to 36,
-        "targetSdkVersion" to 36,
-        "minSdkVersion" to 23,
-        "ndkVersion" to "27.0.12077973"
-    ))
 }
 
 val newBuildDir: Directory =
@@ -27,6 +21,12 @@ subprojects {
 
 subprojects {
     if (project.name != "app") {
+        project.extra.set("flutter", mapOf(
+            "compileSdkVersion" to 36,
+            "targetSdkVersion" to 36,
+            "minSdkVersion" to 23,
+            "ndkVersion" to "27.0.12077973"
+        ))
         afterEvaluate {
             if (project.hasProperty("android")) {
                 val android = project.extensions.findByName("android")
