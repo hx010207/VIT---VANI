@@ -1,7 +1,7 @@
 # PURPOSE: Development task orchestration definitions for linting, testing, and running services.
 # ROLE IN SYSTEM: Provides unified CLI commands for test execution, migrations, and service startup.
 # TALKS TO: pytest, uvicorn, docker-compose.yml
-.PHONY: help dev test lint bench models demo
+.PHONY: help dev setup test lint bench models demo public
 
 PYTHON := .venv/Scripts/python
 PYTEST := .venv/Scripts/pytest
@@ -9,14 +9,26 @@ UVICORN := .venv/Scripts/uvicorn
 
 help:
 	@echo "VaniGuard Automation Targets:"
-	@echo "  dev     - Start FastAPI server on port 8000"
+	@echo "  setup   - Bind physical Android phone USB port (adb reverse tcp:8000 tcp:8000)"
+	@echo "  dev     - Bind USB port and start FastAPI server on port 8000"
+	@echo "  public  - Start server and expose public HTTPS/WSS URL for mobile app"
 	@echo "  test    - Run all automated tests in server/tests"
 	@echo "  lint    - Run code verification (zero emojis, zero prohibited terms)"
 	@echo "  bench   - Run all 5 empirical benchmarks"
 	@echo "  models  - Pre-fetch and cache faster-whisper and ECAPA-TDNN models"
 	@echo "  demo    - Full deterministic boot: server + e2e smoke + setup instructions"
 
+setup:
+	@echo "Binding connected Android device via ADB..."
+	-adb reverse tcp:8000 tcp:8000
+	@echo "Device bound to http://localhost:8000!"
+
+public:
+	-adb reverse tcp:8000 tcp:8000
+	$(PYTHON) run_public_tunnel.py
+
 dev:
+	-adb reverse tcp:8000 tcp:8000
 	$(UVICORN) server.app.main:app --host 0.0.0.0 --port 8000 --reload
 
 test:

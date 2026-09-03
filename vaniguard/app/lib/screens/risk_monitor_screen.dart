@@ -234,7 +234,7 @@ class _RiskMonitorScreenState extends State<RiskMonitorScreen> {
       decoration: BoxDecoration(
         color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
         borderRadius: BorderRadius.circular(12),
-        border: hasRisk ? Border.all(color: QuietVaultColors.accent, width: 1.5) : Border.none,
+        border: hasRisk ? Border.all(color: QuietVaultColors.accent, width: 1.5) : null,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

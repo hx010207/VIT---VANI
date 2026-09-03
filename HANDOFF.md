@@ -23,6 +23,7 @@ BACKEND: ALL WORKING, VERIFIED THROUGH REAL HTTP/WS CALLS:
 - FastAPI gateway: 25 REST endpoints (not 22, it grew). /health 200,
   sweeper_active: true. Supabase JWT auth via JWKS verified: no token
   401, forged token 401, valid token 200.
+  Public access command: `make public` (runs uvicorn + SSH tunnel for remote mobile access).
 - KMS envelope encryption: voiceprints stored as AES-256-GCM BYTEA
   (1040 bytes), key_id kms-v1, per-record IV.
 - Double-entry ledger: FOR UPDATE locks, X-Idempotency-Key replay
