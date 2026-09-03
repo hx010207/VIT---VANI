@@ -6,6 +6,22 @@ VaniGuard is a production-grade, voice-first banking interface with an embedded 
 
 ---
 
+## Direct APK Download (No ADB Required)
+
+You can download and install VaniGuard directly on any Android phone without needing USB cables or developer tools.
+
+### Installing from GitHub Releases
+1. Open this repository on your mobile phone browser: [https://github.com/hx010207/VIT---VANI](https://github.com/hx010207/VIT---VANI)
+2. Tap **Releases**.
+3. Download **`app-release.apk`**.
+4. Tap the downloaded file to install on your phone (enable *Install from Unknown Sources* if prompted by Android).
+
+### Automated Builds via GitHub Actions
+This repository includes a GitHub Actions workflow (`.github/workflows/release_apk.yml`) that compiles the Flutter app and publishes APK binaries automatically.
+- **To trigger a release build**: Go to the **Actions** tab on GitHub, select **Build and Release Flutter APK**, and click **Run workflow** (or push a git tag `v*`).
+
+---
+
 ## Architectural Overview
 
 The platform operates across three integrated planes:
