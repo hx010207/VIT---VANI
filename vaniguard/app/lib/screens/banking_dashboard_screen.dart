@@ -78,14 +78,14 @@ class BankingDashboardScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  Text(
+                  const Text(
                     "User: user_test_001",
                     style: TextStyle(
                       fontSize: 14,
                       color: QuietVaultColors.textSecondary,
                     ),
                   ),
-                  Text(
+                  const Text(
                     "Savings A/C: ...4819",
                     style: TextStyle(
                       fontSize: 12,
@@ -100,7 +100,7 @@ class BankingDashboardScreen extends StatelessWidget {
               title: Text(
                 AppLocalizations.of(context)?.voiceBanking ?? "Voice Banking",
               ),
-              onPressed: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/voice-session");
               },
@@ -108,7 +108,7 @@ class BankingDashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.people_outline),
               title: const Text("Trusted Contacts"),
-              onPressed: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/trusted-contacts");
               },
@@ -116,7 +116,7 @@ class BankingDashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.security_outlined),
               title: const Text("Risk Monitor"),
-              onPressed: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/risk-monitor");
               },
@@ -124,7 +124,7 @@ class BankingDashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.record_voice_over_outlined),
               title: const Text("Voice Enrollment"),
-              onPressed: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/voice-enroll");
               },
@@ -132,7 +132,7 @@ class BankingDashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.privacy_tip_outlined),
               title: const Text("Privacy & Consents"),
-              onPressed: () {
+              onTap: () {
                 Navigator.pop(context);
                 Navigator.pushNamed(context, "/consents");
               },
@@ -141,7 +141,7 @@ class BankingDashboardScreen extends StatelessWidget {
             ListTile(
               leading: const Icon(Icons.logout_outlined),
               title: const Text("Sign Out"),
-              onPressed: () {
+              onTap: () {
                 Navigator.pushNamedAndRemoveUntil(
                   context,
                   "/login",
