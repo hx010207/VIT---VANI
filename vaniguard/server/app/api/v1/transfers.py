@@ -102,26 +102,86 @@ async def initiate_transfer(
     sv_result = {"score_points": 35, "evidence_summary": "Second voice coaching detected"} if req.second_voice_detected else None
     vs_result = {"score_points": req.voice_stress_score or 20, "evidence_summary": "Elevated vocal stress detected"} if req.voice_stress_score else None
 
-    explainability_payload = risk_engine.evaluate_risk(
-        risk_input,
-        second_voice_result=sv_result,
-        vocal_stress_result=vs_result
-    )
-    score = explainability_payload.total_score
-    band = explainability_payload.risk_band
-    explainability_dicts = [s.model_dump() for s in explainability_payload.signals]
+    # Resilient fail-closed evaluation
+    try:
+        explainability_payload = risk_engine.evaluate_risk(
+            risk_input,
+            second_voice_result=sv_result,
+            vocal_stress_result=vs_result
+        )
+        score = explainability_payload.total_score
+        band = explainability_payload.risk_band
+        explainability_dicts = [s.model_dump() for s in explainability_payload.signals]
+    except Exception as re_err:
+        logger.error("Risk engine failure, failing closed to SOFT_VERIFY", error=str(re_err))
+        score = 55
+        band = RiskBandEnum.SOFT_VERIFY
+        explainability_dicts = []
+        explainability_payload = type("Obj", (), {
+            "total_score": 55,
+            "risk_band": RiskBandEnum.SOFT_VERIFY,
+            "signals": []
+        })()
+
+    # Check always_allow_payees: pre-approved by guardian to skip spoken challenge
+    is_always_allow = False
+    if is_pg_available():
+        try:
+            with get_db_cursor() as cur:
+                cur.execute("""
+                    SELECT 1 FROM always_allow_payees
+                    WHERE account_holder_id = %s AND payee_id = %s AND active = TRUE
+                    LIMIT 1;
+                """, (str(target_user_id), str(req.payee_id)))
+                if cur.fetchone():
+                    is_always_allow = True
+        except Exception:
+            pass
+
+    if not is_always_allow:
+        for aap in db.always_allow_payees.values():
+            if aap["account_holder_id"] == target_user_id and aap["payee_id"] == req.payee_id and aap.get("active", True):
+                is_always_allow = True
+                break
+
+    # If always-allow matches AND band is SOFT_VERIFY: skip spoken challenge, proceed!
+    # INVARIANT: CIRCUIT_BREAK is NEVER bypassed by always_allow.
+    if is_always_allow and band == RiskBandEnum.SOFT_VERIFY:
+        logger.info("Payee is pre-approved in always_allow list; bypassing spoken challenge", payee_id=str(req.payee_id))
+        band = RiskBandEnum.PROCEED
+
+    from server.app.services.notifications import notification_manager
+    payee = db.payees.get(req.payee_id, {})
 
     # 3. Decision Band Execution
     if band == RiskBandEnum.CIRCUIT_BREAK:
-        # Trigger Circuit-Break: Hold transfer, start 30-min cooling window, no money moves
+        # Determine account-specific cooling window
+        cooling_minutes = 30
+        for tr in db.trust_relationships.values():
+            if tr["account_holder_id"] == target_user_id and tr["active"]:
+                cooling_minutes = tr.get("cooling_window_minutes", 30)
+                break
+
+        # Trigger Circuit-Break: Hold transfer, start cooling window, zero money moves
         held_transfer = ledger_service.hold_transfer(
             transfer_id=transfer["id"],
             risk_score=score,
             risk_band=band,
             explainability=explainability_dicts,
-            cooling_minutes=30,
+            cooling_minutes=cooling_minutes,
             request_id=request_id
         )
+
+        # Immediately notify guardian and holder over WebSocket
+        await notification_manager.notify_circuit_break(
+            holder_id=target_user_id,
+            transfer_id=held_transfer["id"],
+            amount_paise=req.amount_paise,
+            payee_name=payee.get("name", "Payee"),
+            risk_score=score,
+            cooling_minutes=cooling_minutes
+        )
+
         return TransferResponse(
             id=held_transfer["id"],
             user_id=held_transfer["user_id"],
@@ -159,13 +219,11 @@ async def initiate_transfer(
         )
     else:
         # PROCEED: Atomically execute double-entry ledger settlement
-        # Try async fast path first (single WAN round-trip via DB function)
         settled = await ledger_service.execute_settlement_fast(
             transfer_id=transfer["id"],
             request_id=request_id
         )
         if settled is None:
-            # Fall back to multi-query synchronous path
             settled = ledger_service.execute_settlement(
                 transfer_id=transfer["id"],
                 request_id=request_id
@@ -173,6 +231,23 @@ async def initiate_transfer(
         settled["risk_score"] = score
         settled["risk_band"] = band
         settled["explainability"] = explainability_dicts
+
+        # Broadcast transfer_completed to both parties for live balance refresh
+        tc_id = None
+        for tr in db.trust_relationships.values():
+            if tr["account_holder_id"] == target_user_id and tr["active"]:
+                tc_id = tr["trusted_contact_id"]
+                break
+
+        await notification_manager.notify_transfer_status(
+            transfer_id=settled["id"],
+            status="transfer_completed",
+            holder_id=target_user_id,
+            tc_id=tc_id,
+            amount_paise=req.amount_paise,
+            payee_name=payee.get("name", "Payee")
+        )
+
         return TransferResponse(
             id=settled["id"],
             user_id=settled["user_id"],

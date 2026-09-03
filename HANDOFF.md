@@ -14,9 +14,73 @@ never auto-complete a dangerous transfer. We pause and bring in a human.
 THE ONE-LINE THESIS: Existing systems verify the voice. VaniGuard
 verifies the freedom of the person behind it.
 
+## 1.1 SYSTEM OF RECORD (AUTHORITATIVE BACKEND)
+MANDATE: Supabase (PostgreSQL with Row Level Security) is authoritative
+for all demo flows, balance accounting, authentication, and guardian rules.
+The in-memory DatabaseStore is a test fallback only. The two-device
+verification MUST run against the live Supabase backend, not in-memory.
+All balance mutations, ledger commits, and guardian approvals persist directly
+to Supabase PostgreSQL.
+
+## 1.2 PERMANENT DEMO ACCOUNTS AND RUN SHEET
+Permanent accounts seeded in live Supabase PostgreSQL and memory:
+
+1. ELDER ACCOUNT (Device 1):
+   - Name: Asha Sharma (Elder)
+   - Phone: +919876543210
+   - Password: Asha@Demo2026
+   - Account Number: ...4819 (Savings)
+   - Initial Balance: 50,000 INR (5,000,000 paise)
+   - Guardian Mode: ON (Protected by daughter Priya)
+   - Login Action: Tap "Demo: Elder" button to autofill credentials, then tap "Sign In".
+
+2. GUARDIAN ACCOUNT (Device 2):
+   - Name: Priya Sharma (Guardian)
+   - Phone: +919876543211
+   - Password: Priya@Demo2026
+   - Account Number: ...7777 (Savings)
+   - Initial Balance: 25,000 INR (2,500,000 paise)
+   - Relationship: Daughter / Designated Caregiver
+   - Cooling Window: 30 minutes (customizable down to 5 min safety floor)
+   - Login Action: Tap "Demo: Guardian" button to autofill credentials, then tap "Sign In".
+
+3. PRE-APPROVED PAYEE:
+   - Name: Son Rahul (Groceries & Support)
+   - Payee ID: 44444444-4444-4444-4444-444444444444
+   - Invariant: Present in always_allow_payees. Transfers to Rahul skip SOFT_VERIFY
+     spoken challenge, but NEVER bypass CIRCUIT_BREAK holds if coercion is detected.
+
+4. 100+ REALISTIC CONTACTS AND BILLERS:
+   - Seeded in payees table for smooth voice navigation (BSES Electricity, Delhi Jal Board,
+     IGL Gas, neighborhood pharmacies, family members).
+
 ## 2. WHAT IS BUILT AND VERIFIED LIVE (do not rebuild any of this)
 
 BACKEND: ALL WORKING, VERIFIED THROUGH REAL HTTP/WS CALLS:
+- Supabase PostgreSQL, region ap-northeast-1, 14 tables, RLS on all,
+  immutable audit_log (DB trigger rejects UPDATE/DELETE), 188 seeded
+  lexicon terms (90 en + 98 hi, deduped), versioned risk_signal_config.
+- FastAPI gateway: 30 REST endpoints. /health 200, sweeper_active: true.
+  Supabase JWT auth via JWKS verified: no token 401, forged token 401, valid token 200.
+  Session exchange supports PBKDF2 password authentication and returns guardian metadata.
+  Public access command: `make public` (runs uvicorn + SSH tunnel for remote mobile access).
+- Guardian Mode Endpoints (/api/v1/guardian):
+  * GET /guardian/status: comprehensive guardian configuration and pre-approved payees.
+  * PATCH /guardian/cooling-window: allows guardian to shorten window down to 5-minute safety floor.
+  * POST & DELETE /guardian/always-allow-payees: pre-approves trusted payees.
+  * POST /guardian/change-request: requires 6-digit spoken challenge AND enforces mandatory 24h cooling.
+  * Invariant: No endpoint allows guardian to disable circuit break (verified via pytest).
+- Ephemeral Challenge Service (2-Minute Expiry & Single-Use):
+  * Spoken 6-digit challenge expires in 120 seconds.
+  * Strict single-use consumption: immediately popped from memory; reused answers are rejected.
+- In-Memory Sliding-Window Rate Limiter:
+  * 3 consecutive failed challenges trigger protective CIRCUIT_BREAK hold and escalate alert to guardian.
+- Live Real-Time Push WebSocket (/ws/events):
+  * Pushes transfer_completed, transfer_cancelled, circuit_break_alert, transfer_held directly to mobile client.
+  * Triggers real-time balance refetch on both devices without manual refresh.
+- Automated Tests: 32/32 tests passing (100% green).
+  * 8/8 e2e money-path smoke passing on live Supabase.
+  * Concurrent e2e test passing (2 instances executed simultaneously with zero deadlocks and exact balance conservation).
 - Supabase PostgreSQL, region ap-northeast-1, 12 tables, RLS on all,
   immutable audit_log (DB trigger rejects UPDATE/DELETE), 188 seeded
   lexicon terms (90 en + 98 hi, deduped), versioned risk_signal_config.

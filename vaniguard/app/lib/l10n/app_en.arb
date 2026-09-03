@@ -50,6 +50,15 @@
   "loginButtonHint": "Submits credentials to authenticate your banking session",
   "demoLogin": "Quick Demo Sign In",
   "demoLoginHint": "Instantly signs in with demo credentials for testing",
+  "demoElder": "Demo: Elder",
+  "demoElderHint": "Autofill credentials for Elder demo account",
+  "demoGuardian": "Demo: Guardian",
+  "demoGuardianHint": "Autofill credentials for Guardian demo account",
+  "guardianAlertTitle": "Guardian Alert: Action Required",
+  "guardianAlertSubtitle": "A transfer is currently held for elder safety. Tap to review.",
+  "voiceNavTitle": "Voice Navigation",
+  "voiceNavHint": "Tap to speak navigation or payment commands",
   "savingsAccount": "Primary Savings Account",
   "profile": "User Profile"
 }
+

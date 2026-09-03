@@ -111,8 +111,23 @@ async def approve_held_transfer(
     if not transfer:
         transfer = db.transfers.get(transfer_id)
 
-    if not transfer or transfer["state"] != TransferStateEnum.HELD:
-        raise HTTPException(status_code=404, detail="Held transfer not found or already settled")
+    if not transfer:
+        raise HTTPException(status_code=404, detail="Transfer not found")
+
+    # Double-submit idempotency safe no-op
+    if transfer.get("state") in (TransferStateEnum.COMPLETED, "COMPLETED"):
+        return TCActionResponse(
+            id=uuid.uuid4(),
+            transfer_id=transfer_id,
+            trusted_contact_id=target_tc_id,
+            action=TCActionTypeEnum.APPROVE,
+            attestation=True,
+            attested_at=datetime.datetime.now(datetime.timezone.utc),
+            new_transfer_state=transfer["state"]
+        )
+
+    if transfer.get("state") != TransferStateEnum.HELD and transfer.get("state") != "HELD":
+        raise HTTPException(status_code=400, detail="Transfer is not in HELD state")
 
     # Verify active trust relationship
     authorized = any(
@@ -149,6 +164,18 @@ async def approve_held_transfer(
     settled = ledger_service.execute_settlement(
         transfer_id=transfer_id,
         request_id=request_id
+    )
+
+    # Broadcast notification to both parties for live balance refetch
+    from server.app.services.notifications import notification_manager
+    payee = db.payees.get(transfer.get("payee_id"), {})
+    await notification_manager.notify_transfer_status(
+        transfer_id=transfer_id,
+        status="transfer_completed",
+        holder_id=transfer["user_id"],
+        tc_id=target_tc_id,
+        amount_paise=transfer["amount_paise"],
+        payee_name=payee.get("name", "Payee")
     )
 
     audit_service.log(
@@ -205,8 +232,23 @@ async def deny_held_transfer(
     if not transfer:
         transfer = db.transfers.get(transfer_id)
 
-    if not transfer or transfer["state"] != TransferStateEnum.HELD:
-        raise HTTPException(status_code=404, detail="Held transfer not found")
+    if not transfer:
+        raise HTTPException(status_code=404, detail="Transfer not found")
+
+    # Double-deny idempotency safe no-op
+    if transfer.get("state") in (TransferStateEnum.CANCELLED, "CANCELLED"):
+        return TCActionResponse(
+            id=uuid.uuid4(),
+            transfer_id=transfer_id,
+            trusted_contact_id=target_tc_id,
+            action=TCActionTypeEnum.DENY,
+            attestation=req.attestation,
+            attested_at=datetime.datetime.now(datetime.timezone.utc),
+            new_transfer_state=transfer["state"]
+        )
+
+    if transfer.get("state") != TransferStateEnum.HELD and transfer.get("state") != "HELD":
+        raise HTTPException(status_code=400, detail="Transfer is not in HELD state")
 
     now = datetime.datetime.now(datetime.timezone.utc)
     action_id = uuid.uuid4()
@@ -226,6 +268,18 @@ async def deny_held_transfer(
         actor_id=str(target_tc_id),
         reason=f"Trusted contact denied transfer: {req.reason_category or 'coercion suspected'}",
         request_id=request_id
+    )
+
+    # Broadcast transfer_cancelled to both parties
+    from server.app.services.notifications import notification_manager
+    payee = db.payees.get(transfer.get("payee_id"), {})
+    await notification_manager.notify_transfer_status(
+        transfer_id=transfer_id,
+        status="transfer_cancelled",
+        holder_id=transfer["user_id"],
+        tc_id=target_tc_id,
+        amount_paise=transfer["amount_paise"],
+        payee_name=payee.get("name", "Payee")
     )
 
     audit_service.log(

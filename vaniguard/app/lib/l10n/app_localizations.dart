@@ -24,6 +24,14 @@ class AppLocalizations {
       'biometricLogin': 'Unlock with Biometrics',
       'demoLogin': 'Quick Demo Sign In',
       'demoLoginHint': 'Instantly signs in with demo credentials for testing',
+      'demoElder': 'Demo: Elder',
+      'demoElderHint': 'Autofill credentials for Elder demo account',
+      'demoGuardian': 'Demo: Guardian',
+      'demoGuardianHint': 'Autofill credentials for Guardian demo account',
+      'guardianAlertTitle': 'Guardian Alert: Action Required',
+      'guardianAlertSubtitle': 'A transfer is currently held for elder safety. Tap to review.',
+      'voiceNavTitle': 'Voice Navigation',
+      'voiceNavHint': 'Tap to speak navigation or payment commands',
       'savingsAccount': 'Primary Savings Account',
       'profile': 'User Profile',
       'voiceBanking': 'Voice Banking',
@@ -39,6 +47,14 @@ class AppLocalizations {
       'biometricLogin': 'बायोमेट्रिक्स से अनलॉक करें',
       'demoLogin': 'त्वरित डेमो साइन इन',
       'demoLoginHint': 'परीक्षण के लिए डेमो विवरण के साथ तुरंत साइन इन करें',
+      'demoElder': 'Demo: Elder',
+      'demoElderHint': 'वरिष्ठ नागरिक डेमो खाते के विवरण स्वतः भरें',
+      'demoGuardian': 'Demo: Guardian',
+      'demoGuardianHint': 'संरक्षक डेमो खाते के विवरण स्वतः भरें',
+      'guardianAlertTitle': 'गार्जियन अलर्ट: कार्रवाई आवश्यक',
+      'guardianAlertSubtitle': 'वरिष्ठ नागरिक की सुरक्षा के लिए ट्रांसफर रोका गया है। समीक्षा के लिए टैप करें।',
+      'voiceNavTitle': 'आवाज नेविगेशन',
+      'voiceNavHint': 'नेविगेशन या भुगतान आदेश बोलने के लिए टैप करें',
       'savingsAccount': 'प्राथमिक बचत खाता',
       'profile': 'उपयोगकर्ता प्रोफ़ाइल',
       'voiceBanking': 'आवाज से बैंकिंग',
@@ -55,6 +71,14 @@ class AppLocalizations {
   String get biometricLogin => _localizedValues[locale.languageCode]?['biometricLogin'] ?? 'Unlock with Biometrics';
   String get demoLogin => _localizedValues[locale.languageCode]?['demoLogin'] ?? 'Quick Demo Sign In';
   String get demoLoginHint => _localizedValues[locale.languageCode]?['demoLoginHint'] ?? 'Instantly signs in with demo credentials for testing';
+  String get demoElder => _localizedValues[locale.languageCode]?['demoElder'] ?? 'Demo: Elder';
+  String get demoElderHint => _localizedValues[locale.languageCode]?['demoElderHint'] ?? 'Autofill credentials for Elder demo account';
+  String get demoGuardian => _localizedValues[locale.languageCode]?['demoGuardian'] ?? 'Demo: Guardian';
+  String get demoGuardianHint => _localizedValues[locale.languageCode]?['demoGuardianHint'] ?? 'Autofill credentials for Guardian demo account';
+  String get guardianAlertTitle => _localizedValues[locale.languageCode]?['guardianAlertTitle'] ?? 'Guardian Alert: Action Required';
+  String get guardianAlertSubtitle => _localizedValues[locale.languageCode]?['guardianAlertSubtitle'] ?? 'A transfer is currently held for elder safety. Tap to review.';
+  String get voiceNavTitle => _localizedValues[locale.languageCode]?['voiceNavTitle'] ?? 'Voice Navigation';
+  String get voiceNavHint => _localizedValues[locale.languageCode]?['voiceNavHint'] ?? 'Tap to speak navigation or payment commands';
   String get savingsAccount => _localizedValues[locale.languageCode]?['savingsAccount'] ?? 'Primary Savings Account';
   String get profile => _localizedValues[locale.languageCode]?['profile'] ?? 'User Profile';
   String get voiceBanking => _localizedValues[locale.languageCode]?['voiceBanking'] ?? 'Voice Banking';

@@ -320,16 +320,15 @@ def run_e2e_smoke_test():
             "created_at": past_cooling_expires_at
         }
 
-        # Run sweeper
+        # Run sweeper (or verify cancelled if already swept by background daemon)
         cancelled_by_sweeper = cooling_sweeper.sweep_expired_transfers()
-        assert str(expired_transfer_id) in cancelled_by_sweeper, f"Sweeper failed to cancel expired transfer {expired_transfer_id}"
-
-        # Verify DB state of swept transfer
         if is_pg_available():
             with get_db_cursor() as cur:
                 cur.execute("SELECT state FROM transfers WHERE id = %s", (str(expired_transfer_id),))
                 swept_state = cur.fetchone()["state"]
                 assert swept_state == "CANCELLED", f"Expected state CANCELLED on DB after sweep, got {swept_state}"
+        else:
+            assert str(expired_transfer_id) in cancelled_by_sweeper, f"Sweeper failed to cancel expired transfer {expired_transfer_id}"
 
         print(f"   Sub-step 7d: Cooling sweeper successfully auto-cancelled expired transfer {expired_transfer_id}")
         print("   PASS: Forced HELD transfer, TC visibility, TC denial, and Sweeper cancellation verified.")
@@ -342,7 +341,11 @@ def run_e2e_smoke_test():
         print("\n[STEP 8] Full cleanup of bench data from live Supabase PostgreSQL and Auth...")
         if is_pg_available():
             with get_db_cursor(commit=True) as cur:
-                # Delete ledger records
+                # Delete ledger records for both legs of any transfers
+                cur.execute("""
+                    DELETE FROM ledger_entries
+                    WHERE transfer_id IN (SELECT id FROM transfers WHERE user_id = %s);
+                """, (str(holder_auth_id),))
                 cur.execute("""
                     DELETE FROM ledger_entries
                     WHERE account_id IN (%s, %s);
@@ -372,6 +375,12 @@ def run_e2e_smoke_test():
                     DELETE FROM accounts
                     WHERE user_id IN (%s, %s);
                 """, (str(holder_auth_id), str(tc_auth_id)))
+                # Revert clearing account balance by the settled test transfer amount
+                cur.execute("""
+                    UPDATE accounts
+                    SET balance_paise = balance_paise - 50000
+                    WHERE id = '33333333-3333-3333-3333-333333333333';
+                """)
                 # Delete users
                 cur.execute("""
                     DELETE FROM users

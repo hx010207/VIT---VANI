@@ -30,7 +30,7 @@ class ChallengeService:
         spaced_digits = " ".join(list(digits))
 
         now = datetime.datetime.now(datetime.timezone.utc)
-        expires_at = now + datetime.timedelta(minutes=3)
+        expires_at = now + datetime.timedelta(minutes=2)
 
         self.active_challenges[challenge_id] = {
             "challenge_id": challenge_id,
@@ -58,16 +58,19 @@ class ChallengeService:
         sample_rate: int = 16000,
         transcribed_text: Optional[str] = None
     ) -> ChallengeVerifyResponse:
-        record = self.active_challenges.get(challenge_id)
-        if not record:
+        # Single-use consumption: pop challenge immediately
+        record = self.active_challenges.pop(challenge_id, None)
+        now = datetime.datetime.now(datetime.timezone.utc)
+
+        if not record or now > record.get("expires_at", now):
             return ChallengeVerifyResponse(
                 speaker_match=False,
                 digits_match=False,
                 live=False,
                 similarity=0.0,
                 decision="EXPIRED",
-                user_message_en="Challenge has expired. A new verification code is required.",
-                user_message_hi="सत्यापन कोड समाप्त हो गया है। कृपया नया कोड प्राप्त करें।"
+                user_message_en="Challenge has expired or has already been used. A new verification code is required.",
+                user_message_hi="सत्यापन कोड समाप्त हो गया है या उपयोग हो चुका है। कृपया नया कोड प्राप्त करें।"
             )
 
         expected_code = record["code"]
@@ -95,8 +98,6 @@ class ChallengeService:
         if verified:
             msg_en = "Voice identity and spoken code verified successfully."
             msg_hi = "आपकी आवाज और बोला गया कोड सफलतापूर्वक सत्यापित हो गया है।"
-            # Remove challenge once consumed
-            self.active_challenges.pop(challenge_id, None)
         else:
             reasons_en = []
             reasons_hi = []

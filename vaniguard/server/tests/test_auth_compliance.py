@@ -12,12 +12,26 @@ client = TestClient(app)
 
 
 def test_session_exchange():
-    resp = client.post("/api/v1/auth/session", json={"phone": "+919876543210", "preferred_language": "hi"})
+    # 1. Elder demo account requires password
+    resp_unauth = client.post("/api/v1/auth/session", json={"phone": "+919876543210", "preferred_language": "hi"})
+    assert resp_unauth.status_code == 401
+
+    # 2. Wrong password rejected
+    resp_wrong = client.post("/api/v1/auth/session", json={"phone": "+919876543210", "password": "wrong", "preferred_language": "hi"})
+    assert resp_wrong.status_code == 401
+
+    # 3. Correct credentials authenticated
+    resp = client.post("/api/v1/auth/session", json={"phone": "+919876543210", "password": "Asha@Demo2026", "preferred_language": "hi"})
     assert resp.status_code == 200
     data = resp.json()
     assert data["phone"] == "+919876543210"
     assert "token" in data
-    assert data["preferred_language"] == "hi"
+    assert data["guardian_mode"] is True
+
+    # 4. New uncredentialed phone creates session
+    new_resp = client.post("/api/v1/auth/session", json={"phone": "+919999900001", "preferred_language": "en"})
+    assert new_resp.status_code == 200
+    assert new_resp.json()["phone"] == "+919999900001"
 
 
 def test_dpdp_right_to_erasure():

@@ -81,16 +81,31 @@ class DatabaseStore:
         self.tc_actions: Dict[uuid.UUID, Dict[str, Any]] = {}
         self.consents: Dict[uuid.UUID, Dict[str, Any]] = {}
         self.audit_log: List[Dict[str, Any]] = []
+        self.guardian_pending_changes: Dict[uuid.UUID, Dict[str, Any]] = {}
+        self.always_allow_payees: Dict[uuid.UUID, Dict[str, Any]] = {}
+        self.revoked_tokens: set = set()
         self._seed_default_data()
 
     def _seed_default_data(self):
+        import hashlib
+
+        def _hash(pw: str, salt: str = "vaniguardsalt12345") -> tuple:
+            dk = hashlib.pbkdf2_hmac("sha256", pw.encode("utf-8"), bytes.fromhex(salt.encode("utf-8").hex()[:32]), 100000)
+            return dk.hex(), salt
+
+        asha_hash, asha_salt = _hash("Asha@Demo2026")
+        priya_hash, priya_salt = _hash("Priya@Demo2026")
+
         # Default Elderly User (Asha Sharma)
         user_id = uuid.UUID("11111111-1111-1111-1111-111111111111")
         self.users[user_id] = {
             "id": user_id,
             "phone": "+919876543210",
-            "full_name": "Asha Sharma",
+            "full_name": "Asha Sharma (Elder)",
             "preferred_language": "hi",
+            "guardian_mode": True,
+            "password_hash": asha_hash,
+            "password_salt": asha_salt,
             "accessibility_prefs": {"high_contrast": False, "screen_reader": True, "speech_rate": 0.85},
             "baseline_acoustic_profile": {
                 "f0_mean": 155.0,
@@ -126,10 +141,37 @@ class DatabaseStore:
             "opened_at": datetime.datetime.now(datetime.timezone.utc)
         }
 
+        # Trusted Contact User (Daughter Priya)
+        tc_user_id = uuid.UUID("55555555-5555-5555-5555-555555555555")
+        self.users[tc_user_id] = {
+            "id": tc_user_id,
+            "phone": "+919876543211",
+            "full_name": "Priya Sharma (Guardian)",
+            "preferred_language": "en",
+            "guardian_mode": False,
+            "password_hash": priya_hash,
+            "password_salt": priya_salt,
+            "accessibility_prefs": {"high_contrast": False, "screen_reader": False, "speech_rate": 1.0},
+            "baseline_acoustic_profile": None,
+            "created_at": datetime.datetime.now(datetime.timezone.utc)
+        }
+
+        # Guardian's Account (25,000 INR = 2,500,000 Paise)
+        guardian_account_id = uuid.UUID("77777777-7777-7777-7777-777777777777")
+        self.accounts[guardian_account_id] = {
+            "id": guardian_account_id,
+            "user_id": tc_user_id,
+            "account_number_masked": "...8821",
+            "account_type": "SAVINGS",
+            "currency": "INR",
+            "balance_paise": 2500000,
+            "opened_at": datetime.datetime.now(datetime.timezone.utc)
+        }
+
         # Pre-registered trusted payee (Son Rahul)
-        payee_id = uuid.UUID("44444444-4444-4444-4444-444444444444")
-        self.payees[payee_id] = {
-            "id": payee_id,
+        son_id = uuid.UUID("44444444-4444-4444-4444-444444444444")
+        self.payees[son_id] = {
+            "id": son_id,
             "user_id": user_id,
             "name": "Rahul Sharma",
             "masked_account": "...9921",
@@ -139,28 +181,35 @@ class DatabaseStore:
             "created_at": datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=90)
         }
 
-        # Trusted Contact User (Daughter Priya)
-        tc_user_id = uuid.UUID("55555555-5555-5555-5555-555555555555")
-        self.users[tc_user_id] = {
-            "id": tc_user_id,
-            "phone": "+919876500000",
-            "full_name": "Priya Sharma",
-            "preferred_language": "en",
-            "accessibility_prefs": {"high_contrast": False, "screen_reader": False, "speech_rate": 1.0},
-            "baseline_acoustic_profile": None,
-            "created_at": datetime.datetime.now(datetime.timezone.utc)
-        }
-
         # Trust Relationship
         trust_id = uuid.UUID("66666666-6666-6666-6666-666666666666")
         self.trust_relationships[trust_id] = {
             "id": trust_id,
             "account_holder_id": user_id,
             "trusted_contact_id": tc_user_id,
-            "threshold_paise": 500000,  # 5,000 INR
+            "threshold_paise": 200000,  # 2,000 INR
+            "relationship_type": "daughter",
+            "cooling_window_minutes": 30,
+            "is_guardian": True,
             "active": True,
             "created_at": datetime.datetime.now(datetime.timezone.utc)
         }
+
+        # Pre-approve Son Rahul in always_allow_payees
+        aap_id = uuid.UUID("88888888-8888-8888-8888-888888888888")
+        self.always_allow_payees[aap_id] = {
+            "id": aap_id,
+            "account_holder_id": user_id,
+            "guardian_id": tc_user_id,
+            "payee_id": son_id,
+            "active": True,
+            "approved_at": datetime.datetime.now(datetime.timezone.utc)
+        }
+
+        # Utility Billers and 100+ realistic contacts
+        from scripts.seed_demo_accounts import generate_payees
+        for p in generate_payees(user_id):
+            self.payees[p["id"]] = p
 
 
 db = DatabaseStore()

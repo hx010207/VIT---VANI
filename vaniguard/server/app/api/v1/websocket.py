@@ -286,6 +286,16 @@ async def voice_session_websocket(websocket: WebSocket, token: Optional[str] = N
                         "amount_paise": amount_paise
                     })
 
+                    from server.app.services.notifications import notification_manager
+                    payee_name = db.payees.get(payee_id, {}).get("name", "Payee")
+                    await notification_manager.notify_circuit_break(
+                        holder_id=user_id,
+                        transfer_id=held_transfer_id,
+                        amount_paise=amount_paise,
+                        payee_name=payee_name,
+                        risk_score=explainability.total_score
+                    )
+
                 elif explainability.risk_band == RiskBandEnum.SOFT_VERIFY:
                     await websocket.send_json({
                         "type": "challenge_required",
@@ -332,3 +342,42 @@ async def voice_session_websocket(websocket: WebSocket, token: Optional[str] = N
             })
         except Exception:
             pass
+
+
+@router.websocket("/ws/events")
+async def push_events_websocket(websocket: WebSocket, token: Optional[str] = None, user_id: Optional[str] = None):
+    """
+    Live real-time push notification WebSocket for mobile devices.
+    Pushes circuit_break_alert, transfer_completed, and transfer_cancelled events.
+    """
+    from server.app.services.notifications import notification_manager
+
+    await websocket.accept()
+    resolved_user_id = uuid.UUID("11111111-1111-1111-1111-111111111111")
+    if user_id:
+        try:
+            resolved_user_id = uuid.UUID(user_id)
+        except Exception:
+            pass
+    elif token:
+        if "55555555" in token or "9876543211" in token:
+            resolved_user_id = uuid.UUID("55555555-5555-5555-5555-555555555555")
+        elif "11111111" in token or "9876543210" in token:
+            resolved_user_id = uuid.UUID("11111111-1111-1111-1111-111111111111")
+
+    await notification_manager.register(resolved_user_id, websocket)
+    await websocket.send_json({
+        "type": "connected",
+        "user_id": str(resolved_user_id),
+        "timestamp": datetime.datetime.now(datetime.timezone.utc).isoformat()
+    })
+
+    try:
+        while True:
+            text = await websocket.receive_text()
+            if text == "ping":
+                await websocket.send_json({"type": "pong"})
+    except WebSocketDisconnect:
+        await notification_manager.unregister(resolved_user_id, websocket)
+    except Exception:
+        await notification_manager.unregister(resolved_user_id, websocket)

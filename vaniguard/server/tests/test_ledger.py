@@ -14,6 +14,18 @@ def test_double_entry_balance_conservation():
     payee_id = uuid.UUID("44444444-4444-4444-4444-444444444444")
     clearing_id = uuid.UUID("33333333-3333-3333-3333-333333333333")
 
+    from server.app.database import is_pg_available, get_db_cursor
+    if is_pg_available():
+        with get_db_cursor() as cur:
+            cur.execute("SELECT balance_paise FROM accounts WHERE id = %s", (str(acc_id),))
+            r = cur.fetchone()
+            if r:
+                db.accounts[acc_id]["balance_paise"] = r["balance_paise"]
+            cur.execute("SELECT balance_paise FROM accounts WHERE id = %s", (str(clearing_id),))
+            r2 = cur.fetchone()
+            if r2:
+                db.accounts[clearing_id]["balance_paise"] = r2["balance_paise"]
+
     initial_sender_balance = db.accounts[acc_id]["balance_paise"]
     initial_clearing_balance = db.accounts[clearing_id]["balance_paise"]
     amount = 100000  # 1,000 INR

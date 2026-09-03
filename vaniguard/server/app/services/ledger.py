@@ -268,6 +268,14 @@ class LedgerService:
                                 (new_dest_bal, str(dest_acc["id"]))
                             )
 
+                        # Mirror to in-memory store for unit test consistency
+                        src_uuid = uuid.UUID(str(source_acc["id"]))
+                        dst_uuid = uuid.UUID(str(dest_acc["id"]))
+                        if src_uuid in db.accounts:
+                            db.accounts[src_uuid]["balance_paise"] = new_source_bal
+                        if dst_uuid in db.accounts:
+                            db.accounts[dst_uuid]["balance_paise"] = new_dest_bal
+
                         # Insert double-entry pair
                         debit_id = uuid.uuid4()
                         credit_id = uuid.uuid4()
@@ -280,6 +288,25 @@ class LedgerService:
                             INSERT INTO ledger_entries (id, transfer_id, account_id, direction, amount_paise, balance_after_paise, created_at)
                             VALUES (%s, %s, %s, 'credit', %s, %s, %s)
                         """, (str(credit_id), str(transfer_id), str(dest_acc["id"]), amount, new_dest_bal, now))
+
+                        db.ledger_entries.append({
+                            "id": debit_id,
+                            "transfer_id": transfer_id,
+                            "account_id": src_uuid,
+                            "direction": "debit",
+                            "amount_paise": amount,
+                            "balance_after_paise": new_source_bal,
+                            "created_at": now
+                        })
+                        db.ledger_entries.append({
+                            "id": credit_id,
+                            "transfer_id": transfer_id,
+                            "account_id": dst_uuid,
+                            "direction": "credit",
+                            "amount_paise": amount,
+                            "balance_after_paise": new_dest_bal,
+                            "created_at": now
+                        })
 
                         # Mark transfer COMPLETED
                         cur.execute("""

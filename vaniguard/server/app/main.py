@@ -21,6 +21,7 @@ from server.app.api.v1.trusted_contacts import router as tc_router
 from server.app.api.v1.tc_actions import router as tc_actions_router
 from server.app.api.v1.voice import router as voice_router
 from server.app.api.v1.admin import router as admin_router
+from server.app.api.v1.guardian import router as guardian_router
 from server.app.api.v1.websocket import router as ws_router
 
 
@@ -128,4 +129,5 @@ app.include_router(tc_router, prefix=api_v1_prefix)
 app.include_router(tc_actions_router, prefix=api_v1_prefix)
 app.include_router(voice_router, prefix=api_v1_prefix)
 app.include_router(admin_router, prefix=api_v1_prefix)
+app.include_router(guardian_router, prefix=api_v1_prefix)
 app.include_router(ws_router)

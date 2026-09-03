@@ -58,10 +58,12 @@ class ApiClient {
   // ---- Auth ----
   static Future<Map<String, dynamic>> sessionExchange({
     required String phone,
+    String? password,
     String language = 'hi',
   }) async {
     final resp = await dio.post('/auth/session', data: {
       'phone': phone,
+      if (password != null) 'password': password,
       'preferred_language': language,
     });
     final data = resp.data as Map<String, dynamic>;
@@ -69,6 +71,14 @@ class ApiClient {
       setToken(data['token'] as String);
     }
     return data;
+  }
+
+  static Future<void> logout() async {
+    try {
+      await dio.post('/auth/logout');
+    } catch (_) {}
+    _authToken = null;
+    _dio = null;
   }
 
   // ---- Voice Enrollment ----
@@ -176,10 +186,51 @@ class ApiClient {
     return resp.data as List<dynamic>;
   }
 
+  // ---- Guardian Mode ----
+  static Future<Map<String, dynamic>> getGuardianStatus(String accountHolderId) async {
+    final resp = await dio.get('/guardian/status', queryParameters: {
+      'account_holder_id': accountHolderId,
+    });
+    return resp.data as Map<String, dynamic>;
+  }
+
+  static Future<Map<String, dynamic>> updateCoolingWindow({
+    required String accountHolderId,
+    required int coolingWindowMinutes,
+  }) async {
+    final resp = await dio.patch('/guardian/cooling-window', data: {
+      'account_holder_id': accountHolderId,
+      'cooling_window_minutes': coolingWindowMinutes,
+    });
+    return resp.data as Map<String, dynamic>;
+  }
+
+  static Future<Map<String, dynamic>> addAlwaysAllowPayee({
+    required String accountHolderId,
+    required String payeeId,
+  }) async {
+    final resp = await dio.post('/guardian/always-allow-payees', data: {
+      'account_holder_id': accountHolderId,
+      'payee_id': payeeId,
+    });
+    return resp.data as Map<String, dynamic>;
+  }
+
   // ---- WebSocket Voice Session ----
   static WebSocketChannel connectVoiceSession() {
     final wsUrl = _baseUrl.replaceFirst('http', 'ws');
     final uri = Uri.parse('$wsUrl/ws/voice-session');
+    return WebSocketChannel.connect(
+      uri,
+      protocols: _authToken != null ? ['Bearer', _authToken!] : null,
+    );
+  }
+
+  // ---- WebSocket Push Events ----
+  static WebSocketChannel connectEvents({String? userId}) {
+    final wsUrl = _baseUrl.replaceFirst('http', 'ws');
+    final query = userId != null ? '?user_id=$userId' : '';
+    final uri = Uri.parse('$wsUrl/ws/events$query');
     return WebSocketChannel.connect(
       uri,
       protocols: _authToken != null ? ['Bearer', _authToken!] : null,
