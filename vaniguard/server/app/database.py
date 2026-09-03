@@ -1,12 +1,68 @@
 # PURPOSE: Database connection management and unified fallback layer for PostgreSQL and memory.
 # ROLE IN SYSTEM: Provides pooled PostgreSQL cursors with thread-safe in-memory mirror fallback.
-# TALKS TO: server/app/config.py, psycopg2 pool, all API routers and services
+# TALKS TO: server/app/config.py, psycopg2 pool, asyncpg pool, all API routers and services
 # DO NOT CONFUSE WITH: server/app/services/ledger.py (ledger domain logic)
 import os
 import uuid
 import datetime
+import asyncio
 from typing import Dict, Any, List, Optional
+import structlog
 from server.app.config import settings
+
+logger = structlog.get_logger()
+
+# Asyncpg connection pool (initialized at server startup, persistent)
+_asyncpg_pool = None
+
+
+async def init_asyncpg_pool():
+    """Initialize persistent asyncpg connection pool at server startup."""
+    global _asyncpg_pool
+    try:
+        import asyncpg
+        _asyncpg_pool = await asyncpg.create_pool(
+            dsn=settings.DATABASE_URL,
+            min_size=2,
+            max_size=10,
+            command_timeout=30,
+            statement_cache_size=100
+        )
+        logger.info("Asyncpg connection pool initialized successfully")
+    except Exception as e:
+        logger.warning("Asyncpg pool initialization failed, will use psycopg2 fallback", error=str(e))
+        _asyncpg_pool = None
+
+
+async def close_asyncpg_pool():
+    """Close asyncpg pool at server shutdown."""
+    global _asyncpg_pool
+    if _asyncpg_pool:
+        await _asyncpg_pool.close()
+        _asyncpg_pool = None
+        logger.info("Asyncpg connection pool closed")
+
+
+def get_asyncpg_pool():
+    """Returns the asyncpg pool if available, None otherwise."""
+    return _asyncpg_pool
+
+
+async def execute_db_function(func_name: str, *args) -> Optional[List[Dict[str, Any]]]:
+    """
+    Execute a PostgreSQL function via asyncpg pool in a single WAN round-trip.
+    Returns list of result rows as dicts, or None if pool unavailable.
+    """
+    pool = get_asyncpg_pool()
+    if pool is None:
+        return None
+    try:
+        async with pool.acquire() as conn:
+            rows = await conn.fetch(f"SELECT * FROM {func_name}({', '.join(['$' + str(i+1) for i in range(len(args))])})", *args)
+            return [dict(row) for row in rows]
+    except Exception as e:
+        logger.error("Asyncpg function execution failed", function=func_name, error=str(e))
+        return None
 
 
 class DatabaseStore:

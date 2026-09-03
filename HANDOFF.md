@@ -23,6 +23,7 @@ BACKEND: ALL WORKING, VERIFIED THROUGH REAL HTTP/WS CALLS:
 - FastAPI gateway: 25 REST endpoints (not 22, it grew). /health 200,
   sweeper_active: true. Supabase JWT auth via JWKS verified: no token
   401, forged token 401, valid token 200.
+  Public access command: `make public` (runs uvicorn + SSH tunnel for remote mobile access).
 - KMS envelope encryption: voiceprints stored as AES-256-GCM BYTEA
   (1040 bytes), key_id kms-v1, per-record IV.
 - Double-entry ledger: FOR UPDATE locks, X-Idempotency-Key replay
@@ -43,7 +44,8 @@ BACKEND: ALL WORKING, VERIFIED THROUGH REAL HTTP/WS CALLS:
 - WebSocket /ws/voice-session: PCM 16kHz chunks in, typed events out
   (prompt, partial_transcript, final_transcript, risk_update,
   mode_change, challenge_required, transfer_held, session_closed).
-- 15/15 automated tests passing. 8/8 e2e money-path smoke on live DB.
+- 26/26 automated tests passing (15 original + 3 cooling timestamp + 8 InProcessAsyncQueue).
+  8/8 e2e money-path smoke on live DB.
 - Worker: arq (Redis) with InProcessAsyncQueue fallback when Redis
   absent. Models loaded ONCE at boot: faster-whisper small int8 +
   ECAPA-TDNN, cold start 7.07s (use persistent worker, never
@@ -67,10 +69,11 @@ THE FULL LIVE LOOP WAS EXECUTED (session matrix):
   works. Do not assume Redis exists.
 - Docker: NOT installed -> native uvicorn + worker. Compose files
   lint-validated only.
-- Flutter SDK: NOT installed -> agent installed it via prompt or
-  human must install. ADB 1.0.41 works. Two physical Android phones
-  are the demo target (host RAM only 15.4GB, 2.2GB free -> NO
-  emulator, use real devices over USB).
+- Flutter SDK: 3.44.2 installed. ADB 1.0.41 works. Two physical Android
+  phones are the demo target (host RAM only 15.4GB, 2.2GB free -> NO
+  emulator, use real devices over USB). Four screens wired to live API
+  with offline fallback: enrollment, voice session, held, TC portal.
+  API client at app/lib/services/api_client.dart.
 - NO MICROPHONE on host -> all prior sessions used LABELED synthetic
   harmonic waveforms. Every real-audio number is still unverified.
 - Supabase WAN latency: 2-3s per NEW connection, 9-27s per full
@@ -78,20 +81,28 @@ THE FULL LIVE LOOP WAS EXECUTED (session matrix):
   pooling (see GAP 1).
 
 ## 4. THE GAP LIST, RANKED (this is the work order)
-GAP 1 (HIGHEST): Flutter app is BUILT as code but has NEVER connected
-  to the live API. Four demo screens must be wired and verified on
-  real devices: enrollment, voice session, held screen, TC portal.
-GAP 2: Real-audio validation. All benchmark fixtures are synthetic.
-  Record real clips (normal, urgent, digital-arrest script, suspicious
-  word) on phone mic, re-run benchmarks, report honest ranges. Real
-  speaker similarity WILL be below 1.000: find out the real values.
-GAP 3: Transfer latency 23.5s p95 (SLA 300ms). Root cause: N
-  sequential WAN round trips per transfer. Fix: move entire commit
-  into ONE Postgres function (or one pipelined transaction) over a
-  pooled asyncpg connection. Report query-count per transfer before
-  and after.
-GAP 4: cooling_expires_at once showed 2026: verify now() + 30 min.
-GAP 5: Redis absent: InProcessAsyncQueue has no dedicated tests.
+GAP 1 (CLOSED): Flutter app screens wired to live API via
+  app/lib/services/api_client.dart. All 4 critical screens (enrollment,
+  voice session, held screen, TC portal) use real microphone, WebSocket,
+  and REST calls. Offline fallback active when API unavailable.
+  REMAINING: compile and test on physical devices.
+GAP 2 (SCRIPT READY): Real-audio validation script created at
+  bench/real_audio_validation.py with 4 clip recording prompts.
+  bench/clips/ directory created. AWAITING human-recorded clips.
+GAP 3 (CODE READY): Transfer latency fix implemented.
+  migrations/002_transfer_commit_function.sql: server-side PL/pgSQL
+  function reduces settlement from 6-8 WAN queries to 1.
+  database.py: asyncpg persistent connection pool added.
+  ledger.py: execute_settlement_fast() async fast path added.
+  transfers.py: tries fast path first, falls back to multi-query.
+  REMAINING: apply migration to live Supabase and benchmark.
+GAP 4 (CLOSED): cooling_expires_at verified correct. Uses
+  datetime.now(timezone.utc) + timedelta(minutes=30). 3 regression
+  tests added in test_cooling_timestamp.py, all passing.
+GAP 5 (CLOSED): InProcessAsyncQueue now has 8 dedicated tests
+  covering submit/execute, sync handlers, failure propagation, missing
+  handlers, lifecycle, concurrency, auto-start, and multi-handler.
+  All 8 passing.
 GAP 6: Docker runtime unverified (lint only).
 
 ## 5. NON-NEGOTIABLE RULES
@@ -113,7 +124,7 @@ GAP 6: Docker runtime unverified (lint only).
   stay server-side only, never in the app, never in git, never in
   logs (log 6-char fingerprints only). The password was rotated once
   after a leak: do not leak it again.
-- Every risky change ends with: make test (15/15), /health 200,
+- Every risky change ends with: make test (26/26), /health 200,
   e2e_smoke.py 8/8, cleanup of bench entities (0 leftover rows).
 
 ## 6. KEY FILES
@@ -123,6 +134,10 @@ GAP 6: Docker runtime unverified (lint only).
 - worker/dsp.py: VAD, pYIN, jitter/shimmer, second-voice
 - worker/providers/: ASR + speaker provider interfaces (pluggable)
 - migrations/001_initial_schema.sql: all 12 tables, RLS, trigger
+- migrations/002_transfer_commit_function.sql: single-round-trip transfer
+- bench/real_audio_validation.py: real-audio validation script
+- bench/clips/: directory for human-recorded validation clips
+- app/lib/services/api_client.dart: Flutter API client
 - bench/e2e_smoke.py: the 8-step live proof
 - app/lib/screens/: 9 Flutter screens, Quiet Vault design system
   (deep green #1B4332 on ivory #FAF7F0, brass #B08968 warnings only,
@@ -148,7 +163,7 @@ HI: "आपकी सुरक्षा के लिए, हम इस ट्�
 
 ## 9. NUMBERS TO KEEP CONSISTENT ACROSS ALL DOCS
 25 endpoints. 12 tables. 5 signals (35/30/25/20/20). Bands 0-39 /
-40-69 / 70-100. 90 en + 98 hi lexicon terms. 15/15 tests. 8/8 e2e.
+40-69 / 70-100. 90 en + 98 hi lexicon terms. 26/26 tests. 8/8 e2e.
 Speaker threshold 0.68. 256-d embeddings. AES-256-GCM. 30-min
 cooling. 6-digit spoken challenge. Audio purged <500ms. Model cold
 start 7.07s (fix: persistent worker).

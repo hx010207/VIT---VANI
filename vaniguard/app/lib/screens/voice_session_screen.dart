@@ -1,11 +1,16 @@
 /// PURPOSE: Active conversational voice banking session interface over WebSocket.
-/// ROLE IN SYSTEM: Streams microphone audio, displays live transcripts, and handles band transitions.
-/// TALKS TO: app/lib/widgets/voice_waveform.dart, app/lib/screens/risk_monitor_screen.dart
+/// ROLE IN SYSTEM: Streams microphone audio to backend, displays live transcripts and risk bands.
+/// TALKS TO: app/lib/services/api_client.dart, /ws/voice-session, app/lib/widgets/voice_waveform.dart
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:record/record.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/voice_waveform.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';
+import 'package:vaniguard/services/api_client.dart';
 
 class VoiceSessionScreen extends StatefulWidget {
   const VoiceSessionScreen({super.key});
@@ -16,20 +21,95 @@ class VoiceSessionScreen extends StatefulWidget {
 
 class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
   bool _isListening = false;
+  bool _wsConnected = false;
   String _activeTranscript = "Press the button or spacebar to speak your banking request.";
   String _lastAgentResponse = "Welcome to VaniGuard. How may I assist with your account today?";
-  int _currentRiskScore = 12;
+  int _currentRiskScore = 0;
   String _currentRiskBand = "PROCEED";
+  String? _heldTransferId;
   final FocusNode _micFocusNode = FocusNode();
 
-  void _toggleMic() {
-    setState(() {
-      _isListening = !_isListening;
-      if (_isListening) {
-        _activeTranscript = "Listening... Speak naturally in English or Hindi.";
-      } else {
+  WebSocketChannel? _wsChannel;
+  StreamSubscription? _wsSubscription;
+  final AudioRecorder _recorder = AudioRecorder();
+
+  @override
+  void initState() {
+    super.initState();
+    _connectWebSocket();
+  }
+
+  void _connectWebSocket() {
+    try {
+      _wsChannel = ApiClient.connectVoiceSession();
+      _wsSubscription = _wsChannel!.stream.listen(
+        (message) {
+          _handleWsMessage(message);
+        },
+        onError: (error) {
+          setState(() {
+            _wsConnected = false;
+            _lastAgentResponse = "Connection lost. Tap the microphone to reconnect.";
+          });
+        },
+        onDone: () {
+          setState(() {
+            _wsConnected = false;
+          });
+        },
+      );
+      setState(() {
+        _wsConnected = true;
+      });
+    } catch (e) {
+      // WebSocket connection failed -- operate in offline fallback mode
+      setState(() {
+        _wsConnected = false;
+        _lastAgentResponse = "Running in offline mode. Connect to server for live analysis.";
+      });
+    }
+  }
+
+  void _handleWsMessage(dynamic message) {
+    try {
+      final data = jsonDecode(message as String) as Map<String, dynamic>;
+      final eventType = data['type'] as String?;
+
+      setState(() {
+        if (eventType == 'transcript') {
+          _activeTranscript = data['text'] as String? ?? _activeTranscript;
+        } else if (eventType == 'risk_update') {
+          _currentRiskScore = data['score'] as int? ?? _currentRiskScore;
+          _currentRiskBand = data['band'] as String? ?? _currentRiskBand;
+        } else if (eventType == 'agent_response') {
+          _lastAgentResponse = data['text'] as String? ?? _lastAgentResponse;
+        } else if (eventType == 'transfer_held') {
+          _heldTransferId = data['transfer_id'] as String?;
+          _currentRiskBand = 'CIRCUIT_BREAK';
+          _lastAgentResponse =
+              "For your safety, we are holding this transfer for a moment. Take your time. Nothing has left your account.";
+        } else if (eventType == 'transfer_completed') {
+          _lastAgentResponse = data['message'] as String? ??
+              "Transfer completed successfully.";
+          _currentRiskBand = 'PROCEED';
+        }
+      });
+    } catch (_) {
+      // Malformed message -- ignore silently
+    }
+  }
+
+  Future<void> _toggleMic() async {
+    if (_isListening) {
+      // Stop recording
+      await _recorder.stop();
+      setState(() {
+        _isListening = false;
         _activeTranscript = "Processing audio utterance...";
-        // Simulated response arrival
+      });
+
+      // If WS not connected, use offline fallback
+      if (!_wsConnected) {
         Future.delayed(const Duration(milliseconds: 350), () {
           if (mounted) {
             setState(() {
@@ -42,7 +122,55 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
           }
         });
       }
-    });
+    } else {
+      // Check permission and start recording
+      if (!await _recorder.hasPermission()) {
+        setState(() {
+          _lastAgentResponse = "Microphone permission is required for voice banking.";
+        });
+        return;
+      }
+
+      setState(() {
+        _isListening = true;
+        _activeTranscript = "Listening... Speak naturally in English or Hindi.";
+      });
+
+      try {
+        // Start recording as stream for real-time WebSocket streaming
+        final stream = await _recorder.startStream(
+          const RecordConfig(
+            encoder: AudioEncoder.pcm16bits,
+            sampleRate: 16000,
+            numChannels: 1,
+          ),
+        );
+
+        // Stream audio frames to WebSocket
+        stream.listen((data) {
+          if (_wsConnected && _wsChannel != null) {
+            _wsChannel!.sink.add(data);
+          }
+        });
+      } catch (e) {
+        // Streaming not supported, fall back to non-streaming mode
+        try {
+          await _recorder.start(
+            const RecordConfig(
+              encoder: AudioEncoder.pcm16bits,
+              sampleRate: 16000,
+              numChannels: 1,
+            ),
+            path: '',
+          );
+        } catch (_) {
+          setState(() {
+            _isListening = false;
+            _lastAgentResponse = "Microphone not available on this device.";
+          });
+        }
+      }
+    }
   }
 
   void _handleKeyEvent(RawKeyEvent event) {
@@ -53,6 +181,9 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
 
   @override
   void dispose() {
+    _wsSubscription?.cancel();
+    _wsChannel?.sink.close();
+    _recorder.dispose();
     _micFocusNode.dispose();
     super.dispose();
   }
@@ -77,6 +208,15 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
           backgroundColor: Colors.transparent,
           elevation: 0,
           actions: [
+            // Connection status indicator
+            Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: Icon(
+                _wsConnected ? Icons.wifi : Icons.wifi_off,
+                color: _wsConnected ? QuietVaultColors.success : QuietVaultColors.inkSecondary,
+                size: 20,
+              ),
+            ),
             Semantics(
               label: "Open Security Risk Monitor",
               button: true,
@@ -131,6 +271,29 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
+
+                // 5-Signal Risk Strip (live from WebSocket)
+                Semantics(
+                  label: "Five-signal coercion risk breakdown",
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        _signalChip("2nd Voice", _currentRiskBand == "CIRCUIT_BREAK"),
+                        _signalChip("Stress", _currentRiskScore > 50),
+                        _signalChip("Speaker", false),
+                        _signalChip("Lexicon", _currentRiskScore > 35),
+                        _signalChip("Context", _currentRiskScore > 60),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
 
                 // Agent Spoken Response Bubble
                 Semantics(
@@ -202,7 +365,7 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
                     icon: Icons.shield,
                     isDanger: true,
                     onPressed: () {
-                      Navigator.pushNamed(context, "/transfer-held");
+                      Navigator.pushNamed(context, "/transfer-held", arguments: _heldTransferId);
                     },
                   ),
                   const SizedBox(height: 16),
@@ -246,12 +409,41 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 8),
+
+                // Prototype disclaimer footer
+                const Text(
+                  "Prototype operating on synthetic users and sandbox transactions. Thresholds are demonstration values.",
+                  style: TextStyle(fontSize: 12, color: QuietVaultColors.inkSecondary),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 4),
               ],
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _signalChip(String label, bool active) {
+    return Column(
+      children: [
+        Icon(
+          active ? Icons.warning_amber_rounded : Icons.check_circle_outline,
+          color: active ? QuietVaultColors.danger : QuietVaultColors.success,
+          size: 18,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            color: active ? QuietVaultColors.danger : QuietVaultColors.inkSecondary,
+          ),
+        ),
+      ],
     );
   }
 }

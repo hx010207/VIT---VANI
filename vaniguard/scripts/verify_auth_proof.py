@@ -143,7 +143,7 @@ def verify_auth_proof():
         client.delete(f"{settings.SUPABASE_URL}/auth/v1/admin/users/{user_id}", headers=headers)
     
     print("Cleanup completed successfully.")
-    print("\nSUCCESS: FIX 3 PROOF VERIFIED — 401 for missing/invalid tokens, 200 for valid Supabase JWT.")
+    print("\nSUCCESS: FIX 3 PROOF VERIFIED - 401 for missing/invalid tokens, 200 for valid Supabase JWT.")
     print("==================================================")
 
 if __name__ == "__main__":

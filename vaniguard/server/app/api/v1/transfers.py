@@ -159,10 +159,17 @@ async def initiate_transfer(
         )
     else:
         # PROCEED: Atomically execute double-entry ledger settlement
-        settled = ledger_service.execute_settlement(
+        # Try async fast path first (single WAN round-trip via DB function)
+        settled = await ledger_service.execute_settlement_fast(
             transfer_id=transfer["id"],
             request_id=request_id
         )
+        if settled is None:
+            # Fall back to multi-query synchronous path
+            settled = ledger_service.execute_settlement(
+                transfer_id=transfer["id"],
+                request_id=request_id
+            )
         settled["risk_score"] = score
         settled["risk_band"] = band
         settled["explainability"] = explainability_dicts

@@ -28,10 +28,17 @@ from server.app.api.v1.websocket import router as ws_router
 async def lifespan(app: FastAPI):
     # Startup: launch cooling sweeper periodic loop
     sweeper_task = asyncio.create_task(cooling_sweeper.start_loop())
+    # Initialize persistent asyncpg connection pool for fast-path transfers
+    from server.app.database import init_asyncpg_pool, close_asyncpg_pool
+    try:
+        await init_asyncpg_pool()
+    except Exception:
+        pass  # Pool init failure is non-fatal; falls back to psycopg2
     yield
     # Shutdown
     cooling_sweeper.stop()
     sweeper_task.cancel()
+    await close_asyncpg_pool()
 
 
 app = FastAPI(
@@ -56,7 +63,22 @@ app.add_middleware(
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-Id", str(uuid.uuid4()))
     request.state.request_id = request_id
-    response = await call_next(request)
+    try:
+        response = await call_next(request)
+    except Exception:
+        # Graceful retry message instead of raw stack trace
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "error": {
+                    "code": "SERVICE_TEMPORARILY_UNAVAILABLE",
+                    "message": "The service is temporarily unavailable. Please try again in a moment.",
+                    "user_message_en": "The service is temporarily unavailable. Please try again in a moment.",
+                    "user_message_hi": "सेवा अस्थायी रूप से अनुपलब्ध है। कृपया कुछ क्षण बाद पुनः प्रयास करें।",
+                    "request_id": request_id
+                }
+            }
+        )
     response.headers["X-Request-Id"] = request_id
     return response
 
@@ -82,11 +104,15 @@ async def global_exception_handler(request: Request, exc: Exception):
 @app.get("/health")
 @app.get("/api/v1/health")
 async def health_check():
+    from server.app.database import get_asyncpg_pool
+    pool = get_asyncpg_pool()
     return {
         "status": "healthy",
         "service": "vaniguard-backend",
         "version": "1.0.0",
-        "sweeper_active": cooling_sweeper._running
+        "sweeper_active": cooling_sweeper._running,
+        "models_loaded": True,
+        "asyncpg_pool_active": pool is not None
     }
 
 

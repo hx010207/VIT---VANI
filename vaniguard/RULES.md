@@ -1,4 +1,4 @@
-# VaniGuard — Engineering Rules and System Invariants
+# VaniGuard - Engineering Rules and System Invariants
 
 ## 1. Language and Content Constraints
 1. ZERO emojis anywhere in the codebase, UI copy, logs, documentation, comments, or commit history.
