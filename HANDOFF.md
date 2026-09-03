@@ -176,14 +176,18 @@ version tag (v*), and manual dispatch.
 VERSION MATRIX:
 - Java JDK: 17 (Eclipse Temurin)
 - Gradle: 8.11.1 (via gradle-wrapper.properties)
-- Android Gradle Plugin (AGP): 8.7.0 (via settings.gradle.kts)
+- Android Gradle Plugin (AGP): 8.7.0 (application and library in settings.gradle.kts)
 - Kotlin: 2.1.0 (via settings.gradle.kts)
 - Flutter SDK: 3.24.5 (channel stable)
-- Compile SDK: 34 / 35 (with subproject fallback)
+- Compile SDK: 36
+- Target SDK: 36
 - Min SDK: 23
+- speech_to_text: 7.4.0
+- flutter_tts: 4.2.5
+- record: 5.2.0 (with record_android 1.3.3)
 
 WORKFLOW PIPELINE:
 Checkout -> Java 17 -> Flutter 3.24.5 -> flutter pub get ->
-flutter analyze -> flutter test -> flutter build apk --release ->
+flutter analyze -> flutter test -> CI Pre-flight -> flutter build apk --release ->
 Upload vaniguard-<sha>.apk artifact -> GitHub Release.
 
