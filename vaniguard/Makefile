@@ -19,9 +19,7 @@ help:
 	@echo "  demo    - Full deterministic boot: server + e2e smoke + setup instructions"
 
 setup:
-	@echo "Binding connected Android device via ADB..."
-	-adb reverse tcp:8000 tcp:8000
-	@echo "Device bound to http://localhost:8000!"
+	@powershell -ExecutionPolicy Bypass -File .\setup_prototype.ps1
 
 public:
 	-adb reverse tcp:8000 tcp:8000
