@@ -224,8 +224,8 @@ class _TrustedContactPortalScreenState extends State<TrustedContactPortalScreen>
                           color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: Column(
-                          children: const [
+                        child: const Column(
+                          children: [
                             Icon(Icons.check_circle_outline, color: QuietVaultColors.success, size: 48),
                             SizedBox(height: 16),
                             Text(

@@ -226,7 +226,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: Text(
                     _statusMessage!,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 14,
                       color: QuietVaultColors.ink,
                       fontWeight: FontWeight.w500,
@@ -254,11 +254,11 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 20),
 
               // Divider between real auth and demo helper autofills
-              Row(
+              const Row(
                 children: [
-                  const Expanded(child: Divider()),
+                  Expanded(child: Divider()),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    padding: EdgeInsets.symmetric(horizontal: 12),
                     child: Text(
                       'Demo Autofill Options',
                       style: TextStyle(
@@ -268,7 +268,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                   ),
-                  const Expanded(child: Divider()),
+                  Expanded(child: Divider()),
                 ],
               ),
               const SizedBox(height: 16),

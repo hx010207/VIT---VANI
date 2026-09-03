@@ -196,11 +196,11 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(color: QuietVaultColors.accent, width: 2),
                   ),
-                  child: Column(
+                  child: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
-                        children: const [
+                        children: [
                           Icon(Icons.shield_outlined, color: QuietVaultColors.accent, size: 32),
                           SizedBox(width: 12),
                           Expanded(
@@ -211,15 +211,15 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                           ),
                         ],
                       ),
-                      const SizedBox(height: 16),
-                      const Text(
+                      SizedBox(height: 16),
+                      Text(
                         "For your safety, we are holding this transfer for a moment. Take your time. Nothing has left your account. If you are being pressured by anyone on a call, we can help. You may also confirm this transfer with your trusted contact.",
                         style: TextStyle(fontSize: 19, height: 1.5),
                       ),
-                      const SizedBox(height: 12),
-                      const Divider(),
-                      const SizedBox(height: 12),
-                      const Text(
+                      SizedBox(height: 12),
+                      Divider(),
+                      SizedBox(height: 12),
+                      Text(
                         "आपकी सुरक्षा के लिए, हम इस ट्रांसफर को एक क्षण के लिए रोक रहे हैं। जल्दी करने की आवश्यकता नहीं है। आपके खाते से अभी कुछ नहीं गया है। यदि कोई आपको कॉल पर दबाव डाल रहा है, तो हम सहायता कर सकते हैं। आप अपने विश्वसनीय संपर्क से भी इस ट्रांसफर की पुष्टि कर सकते हैं।",
                         style: TextStyle(fontSize: 18, height: 1.5, color: QuietVaultColors.inkSecondary),
                       ),
@@ -300,8 +300,8 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                     color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Row(
-                    children: const [
+                  child: const Row(
+                    children: [
                       Icon(Icons.phone_in_talk, color: QuietVaultColors.primary, size: 28),
                       SizedBox(width: 16),
                       Expanded(
