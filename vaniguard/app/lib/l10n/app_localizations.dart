@@ -20,8 +20,10 @@ class AppLocalizations {
       'phoneOrAccount': 'Phone Number or Account ID',
       'password': 'Password',
       'loginButton': 'Sign In',
+      'loginButtonHint': 'Submits credentials to authenticate your banking session',
       'biometricLogin': 'Unlock with Biometrics',
       'demoLogin': 'Quick Demo Sign In',
+      'demoLoginHint': 'Instantly signs in with demo credentials for testing',
       'savingsAccount': 'Primary Savings Account',
       'profile': 'User Profile',
       'voiceBanking': 'Voice Banking',
@@ -33,8 +35,10 @@ class AppLocalizations {
       'phoneOrAccount': 'फ़ोन नंबर या खाता आईडी',
       'password': 'पासवर्ड',
       'loginButton': 'साइन इन करें',
+      'loginButtonHint': 'अपने बैंकिंग सत्र को प्रमाणित करने के लिए विवरण प्रस्तुत करें',
       'biometricLogin': 'बायोमेट्रिक्स से अनलॉक करें',
       'demoLogin': 'त्वरित डेमो साइन इन',
+      'demoLoginHint': 'परीक्षण के लिए डेमो विवरण के साथ तुरंत साइन इन करें',
       'savingsAccount': 'प्राथमिक बचत खाता',
       'profile': 'उपयोगकर्ता प्रोफ़ाइल',
       'voiceBanking': 'आवाज से बैंकिंग',
@@ -47,8 +51,10 @@ class AppLocalizations {
   String get phoneOrAccount => _localizedValues[locale.languageCode]?['phoneOrAccount'] ?? 'Phone Number or Account ID';
   String get password => _localizedValues[locale.languageCode]?['password'] ?? 'Password';
   String get loginButton => _localizedValues[locale.languageCode]?['loginButton'] ?? 'Sign In';
+  String get loginButtonHint => _localizedValues[locale.languageCode]?['loginButtonHint'] ?? 'Submits credentials to authenticate your banking session';
   String get biometricLogin => _localizedValues[locale.languageCode]?['biometricLogin'] ?? 'Unlock with Biometrics';
   String get demoLogin => _localizedValues[locale.languageCode]?['demoLogin'] ?? 'Quick Demo Sign In';
+  String get demoLoginHint => _localizedValues[locale.languageCode]?['demoLoginHint'] ?? 'Instantly signs in with demo credentials for testing';
   String get savingsAccount => _localizedValues[locale.languageCode]?['savingsAccount'] ?? 'Primary Savings Account';
   String get profile => _localizedValues[locale.languageCode]?['profile'] ?? 'User Profile';
   String get voiceBanking => _localizedValues[locale.languageCode]?['voiceBanking'] ?? 'Voice Banking';

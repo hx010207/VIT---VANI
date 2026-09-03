@@ -78,14 +78,14 @@ class BankingDashboardScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text(
+                  Text(
                     "User: user_test_001",
                     style: TextStyle(
                       fontSize: 14,
                       color: QuietVaultColors.textSecondary,
                     ),
                   ),
-                  const Text(
+                  Text(
                     "Savings A/C: ...4819",
                     style: TextStyle(
                       fontSize: 12,

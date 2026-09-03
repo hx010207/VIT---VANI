@@ -42,5 +42,14 @@
   "normalBand": "Normal",
   "softVerifyBand": "Soft Verify",
   "circuitBreakBand": "Circuit Break",
-  "offlineWarning": "You are currently offline. Read actions queued."
+  "offlineWarning": "You are currently offline. Read actions queued.",
+  "loginTitle": "Secure Voice Banking",
+  "phoneOrAccount": "Phone Number or Account ID",
+  "password": "Password",
+  "loginButton": "Sign In",
+  "loginButtonHint": "Submits credentials to authenticate your banking session",
+  "demoLogin": "Quick Demo Sign In",
+  "demoLoginHint": "Instantly signs in with demo credentials for testing",
+  "savingsAccount": "Primary Savings Account",
+  "profile": "User Profile"
 }

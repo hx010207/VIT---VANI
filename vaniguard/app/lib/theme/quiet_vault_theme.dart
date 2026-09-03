@@ -22,6 +22,13 @@ class QuietVaultColors {
   static const Color darkInk = Color(0xFFEDEBE6);
   static const Color darkInkSecondary = Color(0xFFA2AAA4);
   static const Color darkPrimary = Color(0xFF3E9B7A);
+
+  // Approved Matte Black & Amber Palette tokens
+  static const Color background = Color(0xFF1E1E1E);
+  static const Color card = Color(0xFFFAFAFA);
+  static const Color textPrimary = Color(0xFFFAFAFA);
+  static const Color textSecondary = Color(0xFFB3B3B3);
+  static const Color amberAccent = Color(0xFFFFB300);
 }
 
 class QuietVaultTheme {

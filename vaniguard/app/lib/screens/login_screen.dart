@@ -40,7 +40,11 @@ class _LoginScreenState extends State<LoginScreen> {
         l10n?.phoneOrAccount ?? 'Phone Number or Account ID';
     final localizedPassword = l10n?.password ?? 'Password';
     final localizedLoginButton = l10n?.loginButton ?? 'Sign In';
+    final localizedLoginButtonHint = l10n?.loginButtonHint ??
+        'Submits credentials to authenticate your banking session';
     final localizedDemoButton = l10n?.demoLogin ?? 'Quick Demo Sign In';
+    final localizedDemoButtonHint = l10n?.demoLoginHint ??
+        'Instantly signs in with demo credentials for testing';
 
     return Scaffold(
       backgroundColor: QuietVaultColors.background,
@@ -136,16 +140,17 @@ class _LoginScreenState extends State<LoginScreen> {
               // Primary Login Button
               AccessibleButton(
                 label: localizedLoginButton,
+                semanticsHint: localizedLoginButtonHint,
                 onPressed: _performLogin,
-                variant: ButtonVariant.primary,
               ),
               const SizedBox(height: 16),
 
               // Quick Demo Sign In Button
               AccessibleButton(
                 label: localizedDemoButton,
+                semanticsHint: localizedDemoButtonHint,
                 onPressed: _performLogin,
-                variant: ButtonVariant.neutral,
+                isSecondary: true,
               ),
             ],
           ),
