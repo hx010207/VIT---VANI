@@ -17,5 +17,8 @@ void main() {
 
     // Verify MaterialApp widget is mounted.
     expect(find.byType(MaterialApp), findsOneWidget);
+
+    // Verify VaniGuard branding logo is rendered on launch.
+    expect(find.byType(Image), findsOneWidget);
   });
 }

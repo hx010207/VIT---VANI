@@ -2,6 +2,7 @@
 /// ROLE IN SYSTEM: Primary interface presenting account status and launching voice banking sessions.
 /// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'package:flutter/material.dart';
+import 'package:vaniguard/l10n/app_localizations.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';
 
@@ -11,10 +12,24 @@ class BankingDashboardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
+    final localizedAppTitle =
+        AppLocalizations.of(context)?.appTitle ?? "VaniGuard";
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("VaniGuard"),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/branding/vaniguard_logo.png',
+              width: 32,
+              height: 32,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(width: 10),
+            Text(localizedAppTitle),
+          ],
+        ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -29,6 +44,113 @@ class BankingDashboardScreen extends StatelessWidget {
             onPressed: () => Navigator.pushNamed(context, "/trusted-contacts"),
           ),
         ],
+      ),
+      drawer: Drawer(
+        backgroundColor: QuietVaultColors.background,
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                color: QuietVaultColors.surface,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    children: [
+                      // Drawer logo sized appropriately and never stretched
+                      Image.asset(
+                        'assets/branding/vaniguard_logo.png',
+                        width: 44,
+                        height: 44,
+                        fit: BoxFit.contain,
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        localizedAppTitle,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontWeight: FontWeight.w700,
+                              color: QuietVaultColors.textPrimary,
+                            ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "User: user_test_001",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: QuietVaultColors.textSecondary,
+                    ),
+                  ),
+                  const Text(
+                    "Savings A/C: ...4819",
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: QuietVaultColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.mic_outlined),
+              title: Text(
+                AppLocalizations.of(context)?.voiceBanking ?? "Voice Banking",
+              ),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/voice-session");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.people_outline),
+              title: const Text("Trusted Contacts"),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/trusted-contacts");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.security_outlined),
+              title: const Text("Risk Monitor"),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/risk-monitor");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.record_voice_over_outlined),
+              title: const Text("Voice Enrollment"),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/voice-enroll");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.privacy_tip_outlined),
+              title: const Text("Privacy & Consents"),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/consents");
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout_outlined),
+              title: const Text("Sign Out"),
+              onPressed: () {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  "/login",
+                  (route) => false,
+                );
+              },
+            ),
+          ],
+        ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(

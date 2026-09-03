@@ -19,6 +19,8 @@ jobs:
   build-apk:
     name: Build Android APK Release
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout Code
@@ -42,6 +44,11 @@ jobs:
         run: |
           cd vaniguard/app
           flutter pub get
+
+      - name: Generate Launcher Icons
+        run: |
+          cd vaniguard/app
+          dart run flutter_launcher_icons
 
       - name: Analyze Code
         run: |

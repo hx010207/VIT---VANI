@@ -3,6 +3,7 @@
 /// TALKS TO: app/lib/router.dart, app/lib/theme/quiet_vault_theme.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:vaniguard/l10n/app_localizations.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/router.dart';
 
@@ -48,6 +49,7 @@ class _VaniGuardAppState extends State<VaniGuardApp> {
         Locale('hi', ''),
       ],
       localizationsDelegates: const [
+        AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
