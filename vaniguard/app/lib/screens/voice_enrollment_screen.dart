@@ -73,7 +73,7 @@ class _VoiceEnrollmentScreenState extends State<VoiceEnrollmentScreen> {
       // Record for 4 seconds (enough for enrollment phrase)
       await Future.delayed(const Duration(seconds: 4));
 
-      final path = await _recorder.stop();
+      await _recorder.stop();
 
       setState(() {
         _isRecording = false;
