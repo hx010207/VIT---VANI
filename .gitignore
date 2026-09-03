@@ -1,0 +1,52 @@
+# Environment and credentials
+.env
+*.env
+*.env.local
+*.env.*
+!.env.example
+!vaniguard/.env.example
+
+# Python caches and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Machine learning model caches & weights
+/models/
+/vaniguard/models/
+.cache/
+huggingface/
+torch/
+!**/app/models/*.py
+
+# Python caches and bytecode (enforced after exceptions)
+**/__pycache__/**
+__pycache__/
+*.py[cod]
+*.pyc
+*$py.class
+
+# Audio temp and recordings
+*.wav
+*.mp3
+*.flac
+*.pcm
+temp_audio/
+recordings/
+
+# IDE & OS
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo

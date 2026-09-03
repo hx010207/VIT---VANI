@@ -1,0 +1,456 @@
+{
+  "version": "v1",
+  "language": "en",
+  "terms": [
+    {
+      "term": "immediately",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "right now",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "within 10 minutes",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "within 15 minutes",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "within one hour",
+      "weight": 7,
+      "category": "urgency"
+    },
+    {
+      "term": "urgent transfer",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "hurry up",
+      "weight": 7,
+      "category": "urgency"
+    },
+    {
+      "term": "last chance",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "final warning",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "immediate arrest",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "immediate deportation",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "time is running out",
+      "weight": 7,
+      "category": "urgency"
+    },
+    {
+      "term": "do not delay",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "without any delay",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "penalty timer",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "before the clock runs out",
+      "weight": 7,
+      "category": "urgency"
+    },
+    {
+      "term": "account closing soon",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "freeze in 5 minutes",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "instant verification needed",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "critical deadline",
+      "weight": 7,
+      "category": "urgency"
+    },
+    {
+      "term": "pay immediately",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "act now",
+      "weight": 6,
+      "category": "urgency"
+    },
+    {
+      "term": "enforcement directorate",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "ED",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "cbi",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "central bureau of investigation",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "police headquarters",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "cyber crime police",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "cyber cell",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "arrest warrant",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "fir registered",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "account freeze order",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "court summons",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "supreme court order",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "rbi vigilance officer",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "reserve bank of india",
+      "weight": 7,
+      "category": "authority"
+    },
+    {
+      "term": "income tax department",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "narcotics control bureau",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "ncb officer",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "customs seizure",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "anti terror squad",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "dcp crime branch",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "inspector in charge",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "legal notice issued",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "digital arrest",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "police custody",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "surrender immediately",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "do not disconnect",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "keep the call active",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "keep your phone on",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "stay on the line",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "do not tell your family",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "do not tell anyone",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "confidential protocol",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "secret investigation",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "official secrecy act",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "do not talk to bank staff",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "do not visit the branch",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "lock your room",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "isolate yourself",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "close the doors",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "stay alone",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "do not consult your lawyer",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "do not reveal to children",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "mute other incoming calls",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "strictly confidential audit",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "private clearance",
+      "weight": 7,
+      "category": "secrecy"
+    },
+    {
+      "term": "verification account",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "safe account",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "secure govt account",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "rbi verification account",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "temporary escrow holding",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "refund clearing account",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "security deposit transfer",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "unfreeze deposit",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "anti money laundering clearance",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "bail deposit",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "penalty clearing pool",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "clearing pool transfer",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "temporary holding account",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "protection wallet",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "fund security test",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "money routing test",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "reserve bank transit",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "audit deposit",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "temporary bond payment",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "customs clearance penalty",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "do not visit the bank branch",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "security verification deposit",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "terminated in 5 minutes",
+      "weight": 9,
+      "category": "urgency"
+    }
+  ]
+}

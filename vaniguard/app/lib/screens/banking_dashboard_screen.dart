@@ -1,0 +1,161 @@
+import 'package:flutter/material.dart';
+import 'package:vaniguard/theme/quiet_vault_theme.dart';
+import 'package:vaniguard/widgets/accessible_button.dart';
+
+class BankingDashboardScreen extends StatelessWidget {
+  const BankingDashboardScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("VaniGuard"),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.privacy_tip_outlined, size: 28),
+            tooltip: "Privacy & Consents",
+            onPressed: () => Navigator.pushNamed(context, "/consents"),
+          ),
+          IconButton(
+            icon: const Icon(Icons.people_outline, size: 28),
+            tooltip: "Trusted Contacts",
+            onPressed: () => Navigator.pushNamed(context, "/trusted-contacts"),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              // Primary Account Balance Card (Touch target >= 64dp)
+              Semantics(
+                label: "Savings account ending in 4819. Current balance: 50,000 rupees.",
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: QuietVaultColors.primary,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        "Primary Savings Account (...4819)",
+                        style: TextStyle(fontSize: 16, color: QuietVaultColors.surfaceAlt),
+                      ),
+                      SizedBox(height: 12),
+                      Text(
+                        "INR 50,000",
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.w700,
+                          color: QuietVaultColors.surface,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 28),
+
+              // Main Voice Action Button
+              AccessibleButton(
+                label: "Open Voice Banking Session",
+                semanticsHint: "Starts interactive conversational banking session operable entirely by voice",
+                icon: Icons.mic,
+                onPressed: () {
+                  Navigator.pushNamed(context, "/voice-session");
+                },
+              ),
+              const SizedBox(height: 16),
+
+              AccessibleButton(
+                label: "Security & Coercion Monitor",
+                semanticsHint: "Opens live transparent risk signals display",
+                icon: Icons.security,
+                isSecondary: true,
+                onPressed: () {
+                  Navigator.pushNamed(context, "/risk-monitor");
+                },
+              ),
+              const SizedBox(height: 32),
+
+              // Recent Activity Section
+              const Text(
+                "Recent Activity",
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+              ),
+              const SizedBox(height: 16),
+
+              _buildTransactionTile(
+                title: "Electricity Board Bill",
+                subtitle: "Yesterday, 3:15 PM",
+                amount: "- INR 1,200",
+                isDebit: true,
+                isDark: isDark,
+              ),
+              _buildTransactionTile(
+                title: "Pension Credit",
+                subtitle: "3 days ago",
+                amount: "+ INR 22,500",
+                isDebit: false,
+                isDark: isDark,
+              ),
+              _buildTransactionTile(
+                title: "Son Rahul (Groceries)",
+                subtitle: "Last week",
+                amount: "- INR 500",
+                isDebit: true,
+                isDark: isDark,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTransactionTile({
+    required String title,
+    required String subtitle,
+    required String amount,
+    required bool isDebit,
+    required bool isDark,
+  }) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              Text(subtitle, style: const TextStyle(fontSize: 14, color: QuietVaultColors.inkSecondary)),
+            ],
+          ),
+          Text(
+            amount,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w700,
+              color: isDebit ? QuietVaultColors.danger : QuietVaultColors.success,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,0 +1,496 @@
+{
+  "version": "v1",
+  "language": "hi",
+  "terms": [
+    {
+      "term": "तुरंत",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "अभी के अभी",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "दस मिनट के अंदर",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "पंद्रह मिनट में",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "एक घंटे में",
+      "weight": 7,
+      "category": "urgency"
+    },
+    {
+      "term": "जल्दी करो",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "अंतिम मौका",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "आखरी चेतावनी",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "तुरंत गिरफ्तारी",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "समय खत्म हो रहा है",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "देरी मत करो",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "बिना किसी देरी के",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "खाता अभी बंद हो जाएगा",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "पांच मिनट में ब्लॉक",
+      "weight": 10,
+      "category": "urgency"
+    },
+    {
+      "term": "तुरंत सत्यापन",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "तुरंत पैसा भेजो",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "turant",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "abhi ke abhi",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "jaldi karo",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "aakhri mauka",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "deri mat karo",
+      "weight": 8,
+      "category": "urgency"
+    },
+    {
+      "term": "paanch minute mein",
+      "weight": 9,
+      "category": "urgency"
+    },
+    {
+      "term": "प्रवर्तन निदेशालय",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "ईडी",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "सीबीआई",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "पुलिस मुख्यालय",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "साइबर क्राइम पुलिस",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "साइबर सेल",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "गिरफ्तारी वारंट",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "एफआईआर दर्ज",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "खाता फ्रीज आदेश",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "कोर्ट समन",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "सुप्रीम कोर्ट का आदेश",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "आरबीआई अधिकारी",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "रिजर्व बैंक ऑफ इंडिया",
+      "weight": 7,
+      "category": "authority"
+    },
+    {
+      "term": "आयकर विभाग",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "नारकोटिक्स विभाग",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "कस्टम जब्ती",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "एंटी टेरर स्क्वाड",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "क्राइम ब्रांच डीसीपी",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "थाना प्रभारी",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "कानूनी नोटिस",
+      "weight": 8,
+      "category": "authority"
+    },
+    {
+      "term": "डिजिटल अरेस्ट",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "पुलिस हिरासत",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "आत्मसमर्पण करो",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "giraftari warrant",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "khata freeze",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "cyber crime thana",
+      "weight": 9,
+      "category": "authority"
+    },
+    {
+      "term": "digital arrest",
+      "weight": 10,
+      "category": "authority"
+    },
+    {
+      "term": "फोन मत काटना",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "कॉल चालू रखो",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "फोन डिस्कनेक्ट मत करो",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "लाइन पर बने रहो",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "परिवार को मत बताना",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "किसी को मत बताना",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "गोपनीय प्रक्रिया",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "गुप्त जांच",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "सरकारी गोपनीयता कानून",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "बैंक वालों से बात मत करो",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "ब्रांच में मत जाना",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "कमरा बंद कर लो",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "अकेले बैठो",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "दरवाजा बंद रखो",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "वकील से बात मत करो",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "बच्चों को मत बताना",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "दूसरा फोन म्यूट करो",
+      "weight": 8,
+      "category": "secrecy"
+    },
+    {
+      "term": "phone mat kaatna",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "kisi ko mat batana",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "kamra band kar lo",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "bank walo ko mat batana",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "gupt jaanch",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "सत्यापन खाता",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "सुरक्षित खाता",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "सुरक्षित खाते",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "सरकारी सुरक्षित खाता",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "सरकारी सुरक्षित खाते",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "आरबीआई सत्यापन खाता",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "सत्यापन खाते",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "अस्थायी एस्क्रो खाता",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "रिफंड क्लियरिंग खाता",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "सुरक्षा जमा ट्रांसफर",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "अनफ्रीज शुल्क जमा",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "एंटी मनी लॉन्ड्रिंग क्लीयरेंस",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "जमानत जमा राशि",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "पेनाल्टी क्लीयरिंग पूल",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "अस्थायी होल्डिंग खाता",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "फंड सुरक्षा परीक्षण",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "मनी रूटिंग टेस्ट",
+      "weight": 8,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "कस्टम क्लीयरेंस पेनाल्टी",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "surakshit khata",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "satyapan khata",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "rbi verification khata",
+      "weight": 10,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "jamanaat rashi",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "unfreeze deposit",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "बैंक वालों को मत बताना",
+      "weight": 10,
+      "category": "secrecy"
+    },
+    {
+      "term": "क्लियरिंग पूल",
+      "weight": 9,
+      "category": "unusual_framing"
+    },
+    {
+      "term": "फोन चालू रखो",
+      "weight": 9,
+      "category": "secrecy"
+    },
+    {
+      "term": "line par bane raho",
+      "weight": 9,
+      "category": "secrecy"
+    }
+  ]
+}
