@@ -1,4 +1,4 @@
-# VaniGuard — Empirical Verification and Benchmark Report
+# VaniGuard - Empirical Verification and Benchmark Report
 
 > **Summary**: Empirical benchmark results and methodologies for latency, speaker verification, and DSP.
 > **When to read**: Consult when evaluating system performance budgets or reproducing benchmark claims.

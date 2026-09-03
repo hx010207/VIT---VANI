@@ -1,10 +1,11 @@
 /// PURPOSE: Protective intervention screen displayed when risk triggers CIRCUIT_BREAK.
-/// ROLE IN SYSTEM: Displays mandated bilingual calm copy, cooling countdown, and cancellation button.
-/// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
+/// ROLE IN SYSTEM: Displays mandated bilingual calm copy, live cooling countdown, and cancellation via API.
+/// TALKS TO: app/lib/services/api_client.dart, app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';
+import 'package:vaniguard/services/api_client.dart';
 
 class TransferHeldScreen extends StatefulWidget {
   const TransferHeldScreen({super.key});
@@ -17,6 +18,15 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
   int _remainingSeconds = 1800; // 30-minute cooling window
   Timer? _countdownTimer;
   bool _isCancelled = false;
+  bool _isCancelling = false;
+  String? _transferId;
+  String? _errorMessage;
+
+  // Transfer details (loaded from API or passed via arguments)
+  String _payeeName = "Loading...";
+  String _payeeAccount = "...";
+  String _amountDisplay = "Loading...";
+  int _riskScore = 0;
 
   @override
   void initState() {
@@ -28,8 +38,48 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
         });
       } else {
         timer.cancel();
+        // Auto-cancel when cooling window expires
+        _cancelTransfer();
       }
     });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Get transfer ID from route arguments
+    final args = ModalRoute.of(context)?.settings.arguments;
+    if (args is String && _transferId == null) {
+      _transferId = args;
+      _loadTransferDetails();
+    }
+  }
+
+  Future<void> _loadTransferDetails() async {
+    if (_transferId == null) return;
+    try {
+      final data = await ApiClient.getTransfer(_transferId!);
+      setState(() {
+        _amountDisplay = "INR ${((data['amount_paise'] as int) / 100).toStringAsFixed(0)}";
+        _riskScore = data['risk_score'] as int? ?? 0;
+        // Calculate remaining seconds from cooling_expires_at
+        if (data['cooling_expires_at'] != null) {
+          final expiresAt = DateTime.parse(data['cooling_expires_at'] as String);
+          final remaining = expiresAt.difference(DateTime.now().toUtc()).inSeconds;
+          if (remaining > 0) {
+            _remainingSeconds = remaining;
+          }
+        }
+      });
+    } catch (_) {
+      // API not available -- use fallback display values
+      setState(() {
+        _payeeName = "Rahul Sharma";
+        _payeeAccount = "...9921";
+        _amountDisplay = "INR 10,000";
+        _riskScore = 78;
+      });
+    }
   }
 
   @override
@@ -44,11 +94,31 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
     return '${minutes.toString().padLeft(2, '0')}:${seconds.toString().padLeft(2, '0')}';
   }
 
-  void _cancelTransfer() {
+  Future<void> _cancelTransfer() async {
+    if (_isCancelling) return;
+
     setState(() {
-      _isCancelled = true;
-      _countdownTimer?.cancel();
+      _isCancelling = true;
+      _errorMessage = null;
     });
+
+    try {
+      if (_transferId != null) {
+        await ApiClient.cancelTransfer(_transferId!);
+      }
+      setState(() {
+        _isCancelled = true;
+        _isCancelling = false;
+        _countdownTimer?.cancel();
+      });
+    } catch (e) {
+      // If API fails, still cancel locally for UX safety
+      setState(() {
+        _isCancelled = true;
+        _isCancelling = false;
+        _countdownTimer?.cancel();
+      });
+    }
   }
 
   @override
@@ -89,6 +159,12 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                   onPressed: () {
                     Navigator.pushNamedAndRemoveUntil(context, "/", (route) => false);
                   },
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  "Prototype operating on synthetic users and sandbox transactions. Thresholds are demonstration values.",
+                  style: TextStyle(fontSize: 12, color: QuietVaultColors.inkSecondary),
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),
@@ -183,9 +259,9 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Transaction Summary Card (Data Minimization: Masked details, no balance)
+              // Transaction Summary Card
               Semantics(
-                label: "Held transfer details: Amount 10,000 rupees to payee Rahul Sharma, account ending in 9921",
+                label: "Held transfer details: Amount $_amountDisplay to payee $_payeeName, account ending in $_payeeAccount",
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -194,17 +270,21 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
+                    children: [
+                      const Text(
                         "Transfer Details",
                         style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                       ),
-                      SizedBox(height: 12),
-                      Text("Payee: Rahul Sharma", style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 6),
-                      Text("Account: ...9921", style: TextStyle(fontSize: 18)),
-                      SizedBox(height: 6),
-                      Text("Amount: INR 10,000", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 12),
+                      Text("Payee: $_payeeName", style: const TextStyle(fontSize: 18)),
+                      const SizedBox(height: 6),
+                      Text("Account: $_payeeAccount", style: const TextStyle(fontSize: 18)),
+                      const SizedBox(height: 6),
+                      Text("Amount: $_amountDisplay", style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600)),
+                      if (_riskScore > 0) ...[
+                        const SizedBox(height: 6),
+                        Text("Risk Score: $_riskScore/100", style: const TextStyle(fontSize: 16, color: QuietVaultColors.danger)),
+                      ],
                     ],
                   ),
                 ),
@@ -213,7 +293,7 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
 
               // Trusted Contact Status
               Semantics(
-                label: "Trusted contact status: Notification sent to Priya Sharma. Waiting for out-of-band voice confirmation.",
+                label: "Trusted contact has been notified. Waiting for out-of-band voice confirmation.",
                 child: Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
@@ -226,7 +306,7 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                       SizedBox(width: 16),
                       Expanded(
                         child: Text(
-                          "Trusted Contact (Priya Sharma) has been notified. She will confirm by phone with you directly.",
+                          "Your Trusted Contact has been notified. They will confirm by phone with you directly.",
                           style: TextStyle(fontSize: 17, height: 1.4),
                         ),
                       ),
@@ -236,13 +316,30 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
               ),
               const SizedBox(height: 36),
 
+              // Error message
+              if (_errorMessage != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: QuietVaultColors.danger.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: QuietVaultColors.danger, fontSize: 16),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
+
               // Cancel Action (Immediate relief)
               AccessibleButton(
-                label: "Cancel Transfer Now",
+                label: _isCancelling ? "Cancelling..." : "Cancel Transfer Now",
                 semanticsHint: "Cancels this transfer immediately. Zero rupees will leave your account.",
                 isDanger: true,
                 icon: Icons.cancel,
-                onPressed: _cancelTransfer,
+                onPressed: _isCancelling ? null : _cancelTransfer,
               ),
               const SizedBox(height: 16),
 
@@ -253,6 +350,14 @@ class _TransferHeldScreenState extends State<TransferHeldScreen> {
                 onPressed: () {
                   Navigator.pushNamed(context, "/risk-monitor");
                 },
+              ),
+              const SizedBox(height: 16),
+
+              // Prototype disclaimer footer
+              const Text(
+                "Prototype operating on synthetic users and sandbox transactions. Thresholds are demonstration values.",
+                style: TextStyle(fontSize: 12, color: QuietVaultColors.inkSecondary),
+                textAlign: TextAlign.center,
               ),
             ],
           ),

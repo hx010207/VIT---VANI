@@ -1,4 +1,4 @@
-# VaniGuard — Regulatory Compliance and Data Governance Specification
+# VaniGuard - Regulatory Compliance and Data Governance Specification
 
 > **Summary**: Regulatory compliance specification aligning platform controls with the DPDP Act 2023.
 > **When to read**: Consult when verifying consent management, data minimization, and audit requirements.
