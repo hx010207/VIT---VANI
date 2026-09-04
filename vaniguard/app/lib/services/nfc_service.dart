@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:nfc_manager/nfc_manager.dart';
-import 'package:nfc_manager/nfc_manager_android.dart';
-import 'package:nfc_manager/ndef_record.dart';
 
 /// Canonical audited payees from live Supabase
 class AuditedNfcPayee {
@@ -131,7 +129,7 @@ class NfcService {
       if (payload.isEmpty) return null;
 
       // Check if standard NDEF text record
-      if (record.typeNameFormat == TypeNameFormat.wellKnown &&
+      if (record.typeNameFormat == NdefTypeNameFormat.nfcWellknown &&
           record.type.length == 1 &&
           record.type[0] == 0x54) {
         final status = payload[0];
@@ -153,9 +151,9 @@ class NfcService {
   /// Parses an NfcTag into an NfcCardPayload
   static NfcCardPayload? parseTag(NfcTag tag) {
     try {
-      final ndef = NdefAndroid.from(tag);
+      final ndef = Ndef.from(tag);
       if (ndef == null) return null;
-      final message = ndef.cachedNdefMessage;
+      final message = ndef.cachedMessage;
       if (message == null || message.records.isEmpty) return null;
 
       for (final record in message.records) {
@@ -175,29 +173,16 @@ class NfcService {
   /// Writes an NfcCardPayload to an NDEF tag
   static Future<bool> writeTag(NfcTag tag, NfcCardPayload payload) async {
     try {
-      final ndef = NdefAndroid.from(tag);
+      final ndef = Ndef.from(tag);
       if (ndef == null || !ndef.isWritable) {
         debugPrint('[NfcService] Tag is null or not writable');
         return false;
       }
 
       final jsonStr = payload.toCanonicalJson();
-      final langBytes = ascii.encode('en');
-      final textBytes = utf8.encode(jsonStr);
-
-      final record = NdefRecord(
-        typeNameFormat: TypeNameFormat.wellKnown,
-        type: Uint8List.fromList([0x54]), // 'T'
-        identifier: Uint8List(0),
-        payload: Uint8List.fromList([
-          langBytes.length,
-          ...langBytes,
-          ...textBytes,
-        ]),
-      );
-
-      final message = NdefMessage(records: [record]);
-      await ndef.writeNdefMessage(message);
+      final record = NdefRecord.createText(jsonStr);
+      final message = NdefMessage([record]);
+      await ndef.write(message);
       debugPrint('[NfcService] Wrote card payload: $jsonStr');
       return true;
     } catch (e) {
