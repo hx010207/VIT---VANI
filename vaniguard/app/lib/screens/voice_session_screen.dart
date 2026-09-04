@@ -287,7 +287,7 @@ class _VoiceSessionScreenState extends State<VoiceSessionScreen> {
         final txns = await ApiClient.getRecentTransactions(limit: 3);
         if (txns.isNotEmpty) {
           final first = txns.first;
-          final amtInr = (((first['amount_paise'] as num?)?.toInt() ?? 0) / 100).toInt();
+          final amtInr = (((first['amount_paise'] as num?)?.toInt() ?? 0) ~/ 100);
           final payee = (first['payee_name'] ?? 'Payee').toString();
           final state = (first['state'] ?? 'COMPLETED').toString();
           responseText = "Recent transaction: INR $amtInr to $payee. Status: $state.";

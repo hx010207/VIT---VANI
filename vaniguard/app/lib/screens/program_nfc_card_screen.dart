@@ -112,7 +112,7 @@ class _ProgramNfcCardScreenState extends State<ProgramNfcCardScreen> {
               decoration: BoxDecoration(
                 color: QuietVaultColors.darkSurfaceAlt,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: QuietVaultColors.amberAccent.withValues(alpha: 0.3)),
+                border: Border.all(color: QuietVaultColors.amberAccent.withOpacity(0.3)),
               ),
               child: const Row(
                 children: [
@@ -264,7 +264,7 @@ class _ProgramNfcCardScreenState extends State<ProgramNfcCardScreen> {
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
                 color: _isSuccess
-                    ? Colors.green.withValues(alpha: 0.15)
+                    ? Colors.green.withOpacity(0.15)
                     : QuietVaultColors.darkSurfaceAlt,
                 borderRadius: BorderRadius.circular(10),
                 border: Border.all(
