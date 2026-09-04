@@ -10,36 +10,51 @@ import httpx
 from pathlib import Path
 
 def start_serveo_tunnel():
-    print("\n[Tunnel] Establishing public HTTPS & WSS tunnel via Serveo...")
-    cmd = ["ssh", "-tt", "-o", "StrictHostKeyChecking=no", "-R", "80:localhost:8000", "serveo.net"]
-    proc = subprocess.Popen(
-        cmd,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        text=True,
-        bufsize=1
-    )
+    tunnel_file = Path(".active_tunnel_url")
+    while True:
+        print("\n[Tunnel] Establishing public HTTPS & WSS tunnel via localhost.run...")
+        cmd = ["ssh", "-o", "StrictHostKeyChecking=no", "-o", "ServerAliveInterval=30", "-R", "80:127.0.0.1:8000", "nokey@localhost.run"]
+        try:
+            proc = subprocess.Popen(
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1
+            )
 
-    public_url = None
-    for line in iter(proc.stdout.readline, ""):
-        line_clean = line.strip()
-        if "Forwarding HTTP traffic from" in line_clean:
-            public_url = line_clean.split("from")[-1].strip()
-            wss_url = public_url.replace("https://", "wss://").replace("http://", "ws://") + "/ws/voice-session"
-            print("================================================================================")
-            print("VANIGUARD PUBLIC ACCESS LIVE")
-            print("================================================================================")
-            print(f"  Public REST API Base URL:  {public_url}")
-            print(f"  Public Health Check:        {public_url}/health")
-            print(f"  Public WebSocket Stream:    {wss_url}")
-            print("================================================================================")
-            print("  Copy the Public REST API Base URL into your Flutter app's api_client.dart")
-            print("================================================================================\n")
-        elif line_clean:
-            # Silence tip output
-            if "Tip (" not in line_clean and "Warning:" not in line_clean:
-                print(f"[Tunnel] {line_clean}")
-    proc.wait()
+            public_url = None
+            for line in iter(proc.stdout.readline, ""):
+                line_clean = line.strip()
+                if "tunneled with tls termination, https://" in line_clean:
+                    public_url = "https://" + line_clean.split("https://")[-1].strip()
+                elif "Forwarding HTTP traffic from" in line_clean:
+                    public_url = line_clean.split("from")[-1].strip()
+
+                if public_url and "================================================================================" not in line_clean:
+                    wss_url = public_url.replace("https://", "wss://").replace("http://", "ws://") + "/ws/voice-session"
+                    try:
+                        tunnel_file.write_text(public_url)
+                    except Exception:
+                        pass
+                    print("================================================================================", flush=True)
+                    print("VANIGUARD PUBLIC ACCESS LIVE", flush=True)
+                    print("================================================================================", flush=True)
+                    print(f"  Public REST API Base URL:  {public_url}", flush=True)
+                    print(f"  Public Health Check:        {public_url}/health", flush=True)
+                    print(f"  Public WebSocket Stream:    {wss_url}", flush=True)
+                    print("================================================================================", flush=True)
+                    print("  Copy the Public REST API Base URL into your Flutter app's api_client.dart", flush=True)
+                    print("================================================================================\n", flush=True)
+                    public_url = None
+                elif line_clean:
+                    if "Tip (" not in line_clean and "Warning:" not in line_clean and "==" not in line_clean:
+                        print(f"[Tunnel] {line_clean}", flush=True)
+            proc.wait()
+        except Exception as e:
+            print(f"[Tunnel Error] {e}", flush=True)
+        print("[Tunnel] Connection dropped. Reconnecting in 3 seconds...", flush=True)
+        time.sleep(3)
 
 def main():
     print("================================================================================")

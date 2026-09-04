@@ -1,7 +1,7 @@
 # PURPOSE: Account balance queries and account summary endpoints.
 # ROLE IN SYSTEM: Serves authenticated account holder balances in paise and account metadata.
 # TALKS TO: server/app/database.py, server/app/models/schemas.py, server/app/api/deps.py
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Header
 from typing import List, Optional
 import uuid
 from server.app.database import db, is_pg_available, get_db_cursor
@@ -10,10 +10,25 @@ from server.app.models.schemas import AccountResponse
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
 
+@router.get("", response_model=List[AccountResponse])
 @router.get("/me", response_model=List[AccountResponse])
-async def get_my_accounts(user_id: Optional[uuid.UUID] = None):
+async def get_my_accounts(
+    user_id: Optional[uuid.UUID] = None,
+    authorization: Optional[str] = Header(default=None)
+):
+    target_user_id = user_id
+    if target_user_id is None and authorization and authorization.startswith("Bearer "):
+        try:
+            token = authorization.split("Bearer ")[1].strip()
+            import jwt
+            unverified = jwt.decode(token, options={"verify_signature": False})
+            if unverified.get("sub"):
+                target_user_id = uuid.UUID(unverified["sub"])
+        except Exception:
+            pass
+
     # Default to primary seeded user if not provided
-    target_user_id = user_id or uuid.UUID("11111111-1111-1111-1111-111111111111")
+    target_user_id = target_user_id or uuid.UUID("11111111-1111-1111-1111-111111111111")
     if is_pg_available():
         try:
             with get_db_cursor() as cur:

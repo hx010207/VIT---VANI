@@ -9,8 +9,9 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  // Hosted Supabase backend by default for real device testing without cables or local servers
-  static const String defaultBaseUrl = 'https://qqfexpzwzctwtbjirsvh.supabase.co';
+  // Publicly accessible live backend tunnel
+  static const String defaultBaseUrl = 'https://97b7543e936c3f.lhr.life';
+  static const String fallbackSupabaseUrl = 'https://qqfexpzwzctwtbjirsvh.supabase.co';
   static const String _supabaseAnonKey =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxZmV4cHp3emN0d3Riamlyc3ZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0Mzg5OTMsImV4cCI6MjEwNDAxNDk5M30.16jjPcIezKPoql8yJVFxgjLy1aZ0y7RJuv-qIZxqSh4';
 
@@ -807,8 +808,13 @@ class ApiClient {
   static Future<void> loadConfig() async {
     final prefs = await SharedPreferences.getInstance();
     final savedUrl = prefs.getString('api_base_url');
+    final isStaleTunnel = savedUrl != null &&
+        (savedUrl.contains('serveousercontent.com') ||
+         savedUrl.contains('serveo.net') ||
+         (savedUrl.contains('.lhr.life') && savedUrl != defaultBaseUrl));
     if (savedUrl != null &&
         savedUrl.isNotEmpty &&
+        !isStaleTunnel &&
         !savedUrl.contains('127.0.0.1') &&
         !savedUrl.contains('localhost') &&
         !savedUrl.contains('10.0.2.2')) {

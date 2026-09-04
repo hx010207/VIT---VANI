@@ -10,12 +10,26 @@ import re
 import os
 import hashlib
 import httpx
+import jwt
 from server.app.database import db
 from server.app.config import settings
 from server.app.models.schemas import ErasureResponse, ErrorResponse
 from server.app.services.audit import audit_service
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+
+
+def generate_jwt_token(user_id: uuid.UUID, phone: str = "") -> str:
+    now = datetime.datetime.now(datetime.timezone.utc)
+    payload = {
+        "sub": str(user_id),
+        "role": "authenticated",
+        "aud": "authenticated",
+        "exp": int((now + datetime.timedelta(days=7)).timestamp()),
+        "iat": int(now.timestamp()),
+        "phone": phone
+    }
+    return jwt.encode(payload, settings.JWT_SECRET, algorithm="HS256")
 
 
 def normalize_phone(phone_str: str) -> str:
@@ -166,7 +180,7 @@ async def register_user(req: RegisterRequest, request: Request):
         "opened_at": now
     }
 
-    token = f"jwt-session-{new_id}-{int(now.timestamp())}"
+    token = generate_jwt_token(new_id, normalized_phone)
     return RegisterResponse(
         user_id=new_id,
         phone=normalized_phone,
@@ -229,7 +243,7 @@ async def exchange_session(req: SessionExchangeRequest, request: Request):
     # Check if user has active voiceprint
     has_voiceprint = any(v["user_id"] == user["id"] and v["active"] for v in db.voiceprints.values())
 
-    token = f"jwt-session-{user['id']}-{int(datetime.datetime.now(datetime.timezone.utc).timestamp())}"
+    token = generate_jwt_token(user["id"], user.get("phone", req.phone))
 
     # Check guardian name if guardian_mode is enabled
     guardian_name = None

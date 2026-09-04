@@ -240,11 +240,20 @@ def get_db_cursor(commit: bool = False):
     finally:
         conn.close()
 
+_pg_available_cached = None
+
 def is_pg_available() -> bool:
+    global _pg_available_cached
+    if get_asyncpg_pool() is not None:
+        return True
+    if _pg_available_cached is not None:
+        return _pg_available_cached
     try:
         conn = get_pg_connection()
         conn.close()
+        _pg_available_cached = True
         return True
     except Exception:
+        _pg_available_cached = False
         return False
 

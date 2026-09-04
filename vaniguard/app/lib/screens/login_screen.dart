@@ -203,8 +203,46 @@ class _LoginScreenState extends State<LoginScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Hosted Supabase HTTPS backend is preconfigured. Physical devices connect directly over Wi-Fi without cables.',
+                  'Switch between the live public backend tunnel and Supabase Cloud. Physical devices connect directly over the internet.',
                   style: TextStyle(fontSize: 12, color: QuietVaultColors.textSecondary, height: 1.3),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: QuietVaultColors.amberAccent,
+                          side: const BorderSide(color: QuietVaultColors.amberAccent),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        onPressed: () {
+                          urlController.text = ApiClient.defaultBaseUrl;
+                          setModalState(() {
+                            testResult = null;
+                          });
+                        },
+                        child: const Text('Live Tunnel', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: QuietVaultColors.textSecondary,
+                          side: const BorderSide(color: Colors.white24),
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                        ),
+                        onPressed: () {
+                          urlController.text = ApiClient.fallbackSupabaseUrl;
+                          setModalState(() {
+                            testResult = null;
+                          });
+                        },
+                        child: const Text('Supabase Cloud', style: TextStyle(fontSize: 12)),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 14),
                 TextField(

@@ -1,6 +1,7 @@
 # Environment and credentials
 .env
 *.env.local
+.active_tunnel_url
 
 # Python caches and bytecode
 __pycache__/
