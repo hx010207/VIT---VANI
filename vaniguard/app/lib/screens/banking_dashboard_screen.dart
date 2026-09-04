@@ -1,5 +1,5 @@
 /// PURPOSE: Main banking dashboard display showing live balance in paise, guardian alerts, and hands-free voice navigation.
-/// ROLE IN SYSTEM: Primary interface presenting account status, receiving real-time WebSocket events, and launching voice banking.
+/// ROLE IN SYSTEM: Primary interface presenting account status, receiving real-time WebSocket events, launching voice banking, and routing to Payees, QR, and Bills.
 /// TALKS TO: app/lib/router.dart, app/lib/services/api_client.dart, app/lib/services/voice_command_router.dart, app/lib/widgets/accessible_button.dart
 import 'dart:async';
 import 'dart:convert';
@@ -8,6 +8,7 @@ import 'package:flutter_tts/flutter_tts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:vaniguard/l10n/app_localizations.dart';
+import 'package:vaniguard/main.dart';
 import 'package:vaniguard/services/api_client.dart';
 import 'package:vaniguard/services/voice_command_router.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
@@ -24,13 +25,16 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
   String _userId = '';
   String _userName = 'Account Holder';
   String _userPhone = '';
-  String _maskedAccount = '...4819';
+  String _maskedAccount = '...4821';
   int _balancePaise = 5000000; // Default 50,000 INR
   bool _guardianMode = false;
   String? _guardianName;
   bool _isLoading = true;
   bool _hasPendingGuardianAlert = false;
   String? _pendingAlertMessage;
+
+  // Active Call Guard simulation state
+  bool _simulatedCallActive = false;
 
   WebSocketChannel? _eventsChannel;
   StreamSubscription? _eventsSubscription;
@@ -82,7 +86,6 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
     try {
       final accounts = await ApiClient.getAccounts();
       if (accounts.isNotEmpty) {
-        // Find matching account or use first
         Map<String, dynamic>? targetAccount;
         for (final acc in accounts) {
           if (acc['user_id'] == _userId || _userId.isEmpty) {
@@ -93,10 +96,11 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
         targetAccount ??= accounts.first as Map<String, dynamic>;
 
         setState(() {
-          _balancePaise = (targetAccount?['balance_paise'] as int?) ?? 5000000;
-          _maskedAccount = (targetAccount?['account_number'] as String?) != null
-              ? '...${targetAccount!['account_number'].toString().substring(targetAccount['account_number'].toString().length - 4)}'
-              : '...4819';
+          _balancePaise = (targetAccount?['balance_paise'] as num?)?.toInt() ?? 5000000;
+          _maskedAccount = (targetAccount?['account_number_masked'] as String?) ??
+              ((targetAccount?['account_number'] as String?) != null
+                  ? '...${targetAccount!['account_number'].toString().substring(targetAccount['account_number'].toString().length - 4)}'
+                  : '...4821');
           _isLoading = false;
         });
       } else {
@@ -139,7 +143,6 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
 
           if (eventType == 'transfer_completed' ||
               eventType == 'transfer_cancelled') {
-            // Immediate real-time balance refetch
             _fetchAccounts();
             _checkPendingAlerts();
           } else if (eventType == 'circuit_break_alert' ||
@@ -257,11 +260,47 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
     return 'INR ${inr.toStringAsFixed(2)}';
   }
 
+  Widget _buildQuickActionCard({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    required bool isDark,
+  }) {
+    return Material(
+      color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
+      borderRadius: BorderRadius.circular(12),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, color: QuietVaultColors.primary, size: 28),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: QuietVaultColors.textPrimary,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
-    final localizedAppTitle =
-        AppLocalizations.of(context)?.appTitle ?? "VaniGuard";
+    final l10n = AppLocalizations.of(context);
+    final currentLang = Localizations.localeOf(context).languageCode;
+    final localizedAppTitle = l10n?.appTitle ?? "VaniGuard";
 
     return Scaffold(
       appBar: AppBar(
@@ -270,27 +309,87 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
           children: [
             Image.asset(
               'assets/branding/vaniguard_logo.png',
-              width: 32,
-              height: 32,
+              width: 30,
+              height: 30,
               fit: BoxFit.contain,
             ),
-            const SizedBox(width: 10),
-            Text(localizedAppTitle),
+            const SizedBox(width: 8),
+            Text(localizedAppTitle, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
           ],
         ),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
+          // Active call guard simulation button
           IconButton(
-            icon: const Icon(Icons.privacy_tip_outlined, size: 28),
+            icon: Icon(
+              _simulatedCallActive ? Icons.phone_in_talk : Icons.phone_outlined,
+              color: _simulatedCallActive ? QuietVaultColors.danger : QuietVaultColors.textSecondary,
+            ),
+            tooltip: "Simulate Active Call",
+            onPressed: () {
+              setState(() => _simulatedCallActive = !_simulatedCallActive);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(_simulatedCallActive
+                      ? 'Simulated active call ON (Active Call Guard active)'
+                      : 'Simulated active call OFF'),
+                  duration: const Duration(seconds: 2),
+                ),
+              );
+            },
+          ),
+          // Language toggle
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10.0),
+            child: Row(
+              children: [
+                GestureDetector(
+                  onTap: () => VaniGuardApp.setLocale(context, const Locale('en')),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: currentLang == 'en' ? QuietVaultColors.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'EN',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: currentLang == 'en' ? Colors.black : QuietVaultColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 3),
+                GestureDetector(
+                  onTap: () => VaniGuardApp.setLocale(context, const Locale('hi')),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: currentLang == 'hi' ? QuietVaultColors.primary : Colors.transparent,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    child: Text(
+                      'HI',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: currentLang == 'hi' ? Colors.black : QuietVaultColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.privacy_tip_outlined, size: 24),
             tooltip: "Privacy & Consents",
             onPressed: () => Navigator.pushNamed(context, "/consents"),
           ),
-          IconButton(
-            icon: const Icon(Icons.people_outline, size: 28),
-            tooltip: "Trusted Contacts",
-            onPressed: () => Navigator.pushNamed(context, "/trusted-contacts"),
-          ),
+          const SizedBox(width: 4),
         ],
       ),
       drawer: Drawer(
@@ -310,8 +409,8 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                     children: [
                       Image.asset(
                         'assets/branding/vaniguard_logo.png',
-                        width: 44,
-                        height: 44,
+                        width: 40,
+                        height: 40,
                         fit: BoxFit.contain,
                       ),
                       const SizedBox(width: 12),
@@ -326,7 +425,7 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   Text(
                     _userName,
                     style: const TextStyle(
@@ -346,9 +445,33 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
               ),
             ),
             ListTile(
+              leading: const Icon(Icons.send_rounded),
+              title: const Text("Beneficiaries & Payees"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/payees");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.qr_code_scanner_rounded),
+              title: const Text("Scan UPI QR"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/qr-scan");
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.receipt_long_rounded),
+              title: const Text("Bill Payments"),
+              onTap: () {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, "/pay-bills");
+              },
+            ),
+            ListTile(
               leading: const Icon(Icons.mic_outlined),
               title: Text(
-                AppLocalizations.of(context)?.voiceBanking ?? "Voice Banking",
+                l10n?.voiceBanking ?? "Voice Banking",
               ),
               onTap: () {
                 Navigator.pop(context);
@@ -409,11 +532,11 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         backgroundColor: QuietVaultColors.primary,
-        foregroundColor: QuietVaultColors.surface,
-        icon: const Icon(Icons.mic, size: 28),
+        foregroundColor: Colors.black,
+        icon: const Icon(Icons.mic, size: 26),
         label: const Text(
           "Voice Nav",
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
         ),
         onPressed: _openVoiceNavigationDialog,
       ),
@@ -425,15 +548,44 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding: const EdgeInsets.all(24.0),
+            padding: const EdgeInsets.all(20.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // Active Call Warning Banner
+                if (_simulatedCallActive) ...[
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 16),
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      color: QuietVaultColors.danger.withOpacity(0.15),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: QuietVaultColors.danger.withOpacity(0.5)),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(Icons.phone_in_talk, color: QuietVaultColors.danger, size: 24),
+                        const SizedBox(width: 10),
+                        const Expanded(
+                          child: Text(
+                            "Active Phone Call: Active Call Guard is protecting your payments.",
+                            style: TextStyle(fontSize: 13, color: QuietVaultColors.danger, fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => setState(() => _simulatedCallActive = false),
+                          child: const Text("End Call", style: TextStyle(color: QuietVaultColors.danger, fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+
                 // Guardian Alert Card (Visible when transfer held under safety review)
                 if (_hasPendingGuardianAlert) ...[
                   Container(
-                    margin: const EdgeInsets.only(bottom: 20),
-                    padding: const EdgeInsets.all(18),
+                    margin: const EdgeInsets.only(bottom: 18),
+                    padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
                       color: QuietVaultColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(14),
@@ -444,13 +596,13 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                       children: [
                         Row(
                           children: [
-                            Icon(Icons.shield_outlined, color: Colors.amber.shade800, size: 28),
+                            Icon(Icons.shield_outlined, color: Colors.amber.shade800, size: 26),
                             const SizedBox(width: 10),
                             Expanded(
                               child: Text(
                                 "Guardian Alert: Action Required",
                                 style: TextStyle(
-                                  fontSize: 17,
+                                  fontSize: 16,
                                   fontWeight: FontWeight.w700,
                                   color: Colors.amber.shade900,
                                 ),
@@ -483,7 +635,7 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                 // Guardian Protection Badge
                 if (_guardianMode) ...[
                   Container(
-                    margin: const EdgeInsets.only(bottom: 16),
+                    margin: const EdgeInsets.only(bottom: 14),
                     padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                     decoration: BoxDecoration(
                       color: QuietVaultColors.surfaceAlt,
@@ -492,7 +644,7 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.verified_user, color: QuietVaultColors.primary, size: 20),
+                        const Icon(Icons.verified_user, color: QuietVaultColors.primary, size: 18),
                         const SizedBox(width: 8),
                         Expanded(
                           child: Text(
@@ -509,23 +661,24 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                   ),
                 ],
 
-                // Primary Account Balance Card (Touch target >= 64dp)
+                // Primary Account Balance Card
                 Semantics(
                   label: "Savings account ending in $_maskedAccount. Current balance: ${_formatPaise(_balancePaise)}.",
                   child: Container(
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.all(22),
                     decoration: BoxDecoration(
-                      color: QuietVaultColors.primary,
+                      color: QuietVaultColors.surfaceAlt,
                       borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: QuietVaultColors.primary.withOpacity(0.35), width: 1.5),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
                           "Primary Savings Account ($_maskedAccount)",
-                          style: const TextStyle(fontSize: 16, color: QuietVaultColors.surfaceAlt),
+                          style: const TextStyle(fontSize: 15, color: QuietVaultColors.textSecondary),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                         _isLoading
                             ? const Padding(
                                 padding: EdgeInsets.symmetric(vertical: 8),
@@ -533,7 +686,7 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                                   width: 24,
                                   height: 24,
                                   child: CircularProgressIndicator(
-                                    color: QuietVaultColors.surface,
+                                    color: QuietVaultColors.primary,
                                     strokeWidth: 2.5,
                                   ),
                                 ),
@@ -541,16 +694,49 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                             : Text(
                                 _formatPaise(_balancePaise),
                                 style: const TextStyle(
-                                  fontSize: 36,
+                                  fontSize: 34,
                                   fontWeight: FontWeight.w700,
-                                  color: QuietVaultColors.surface,
+                                  color: QuietVaultColors.primary,
                                 ),
                               ),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 18),
+
+                // Quick Actions: Payees / Send Money, Scan QR, Pay Bills
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildQuickActionCard(
+                        icon: Icons.send_rounded,
+                        label: "Send Money",
+                        onTap: () => Navigator.pushNamed(context, "/payees"),
+                        isDark: isDark,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _buildQuickActionCard(
+                        icon: Icons.qr_code_scanner_rounded,
+                        label: "Scan QR",
+                        onTap: () => Navigator.pushNamed(context, "/qr-scan"),
+                        isDark: isDark,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _buildQuickActionCard(
+                        icon: Icons.receipt_long_rounded,
+                        label: "Pay Bills",
+                        onTap: () => Navigator.pushNamed(context, "/pay-bills"),
+                        isDark: isDark,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 18),
 
                 // Main Voice Action Button
                 AccessibleButton(
@@ -561,7 +747,7 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                     Navigator.pushNamed(context, "/voice-session");
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 AccessibleButton(
                   label: "Security & Coercion Monitor",
@@ -572,14 +758,14 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
                     Navigator.pushNamed(context, "/risk-monitor");
                   },
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 26),
 
                 // Recent Activity Section
                 const Text(
                   "Recent Activity",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
 
                 _buildTransactionTile(
                   title: "Electricity Board Bill",
@@ -618,8 +804,8 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
     required bool isDark,
   }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(18),
+      margin: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: isDark ? QuietVaultColors.darkSurfaceAlt : QuietVaultColors.surfaceAlt,
         borderRadius: BorderRadius.circular(12),
@@ -630,15 +816,15 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text(subtitle, style: const TextStyle(fontSize: 14, color: QuietVaultColors.inkSecondary)),
+              Text(subtitle, style: const TextStyle(fontSize: 13, color: QuietVaultColors.inkSecondary)),
             ],
           ),
           Text(
             amount,
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 16,
               fontWeight: FontWeight.w700,
               color: isDebit ? QuietVaultColors.danger : QuietVaultColors.success,
             ),
@@ -648,4 +834,3 @@ class _BankingDashboardScreenState extends State<BankingDashboardScreen> {
     );
   }
 }
-

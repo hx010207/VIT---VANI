@@ -83,6 +83,39 @@ class QuietVaultTheme {
         ),
       ),
       focusColor: QuietVaultColors.focusRing,
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: QuietVaultColors.primary,
+        selectionColor: Color(0x660B3D2E),
+        selectionHandleColor: QuietVaultColors.primary,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: QuietVaultColors.surfaceAlt,
+        labelStyle: const TextStyle(
+          color: QuietVaultColors.inkSecondary,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        hintStyle: const TextStyle(
+          color: QuietVaultColors.inkSecondary,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        prefixIconColor: QuietVaultColors.primary,
+        suffixIconColor: QuietVaultColors.inkSecondary,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: QuietVaultColors.surfaceAlt),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: QuietVaultColors.inkSecondary.withOpacity(0.3)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: QuietVaultColors.primary, width: 2.0),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(minTouchTarget, minTouchTarget),
@@ -110,12 +143,12 @@ class QuietVaultTheme {
       useMaterial3: true,
       brightness: Brightness.dark,
       primaryColor: QuietVaultColors.darkPrimary,
-      scaffoldBackgroundColor: QuietVaultColors.darkSurface,
+      scaffoldBackgroundColor: QuietVaultColors.background,
       colorScheme: const ColorScheme.dark(
         primary: QuietVaultColors.darkPrimary,
         onPrimary: QuietVaultColors.darkSurface,
-        surface: QuietVaultColors.darkSurface,
-        onSurface: QuietVaultColors.darkInk,
+        surface: QuietVaultColors.background,
+        onSurface: QuietVaultColors.textPrimary,
         surfaceContainerHighest: QuietVaultColors.darkSurfaceAlt,
         error: QuietVaultColors.danger,
         onError: QuietVaultColors.darkInk,
@@ -125,34 +158,67 @@ class QuietVaultTheme {
           fontSize: 34,
           height: 40 / 34,
           fontWeight: FontWeight.w600,
-          color: QuietVaultColors.darkInk,
+          color: QuietVaultColors.textPrimary,
         ),
         titleLarge: TextStyle(
           fontSize: 24,
           height: 32 / 24,
           fontWeight: FontWeight.w600,
-          color: QuietVaultColors.darkInk,
+          color: QuietVaultColors.textPrimary,
         ),
         bodyLarge: TextStyle(
           fontSize: 18,
           height: 28 / 18,
           fontWeight: FontWeight.w400,
-          color: QuietVaultColors.darkInk,
+          color: QuietVaultColors.textPrimary,
         ),
         bodyMedium: TextStyle(
           fontSize: 18,
           height: 28 / 18,
           fontWeight: FontWeight.w400,
-          color: QuietVaultColors.darkInkSecondary,
+          color: QuietVaultColors.textSecondary,
         ),
         bodySmall: TextStyle(
           fontSize: 14,
           height: 20 / 14,
           fontWeight: FontWeight.w400,
-          color: QuietVaultColors.darkInkSecondary,
+          color: QuietVaultColors.textSecondary,
         ),
       ),
-      focusColor: QuietVaultColors.focusRing,
+      focusColor: QuietVaultColors.amberAccent,
+      textSelectionTheme: const TextSelectionThemeData(
+        cursorColor: QuietVaultColors.amberAccent,
+        selectionColor: Color(0x66FFB300),
+        selectionHandleColor: QuietVaultColors.amberAccent,
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: const Color(0xFF2C2C2C),
+        labelStyle: const TextStyle(
+          color: QuietVaultColors.textSecondary,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        hintStyle: const TextStyle(
+          color: QuietVaultColors.textSecondary,
+          fontSize: 16,
+          fontWeight: FontWeight.w400,
+        ),
+        prefixIconColor: QuietVaultColors.amberAccent,
+        suffixIconColor: QuietVaultColors.textSecondary,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF444444)),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Color(0xFF444444)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: QuietVaultColors.amberAccent, width: 2.0),
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(minTouchTarget, minTouchTarget),

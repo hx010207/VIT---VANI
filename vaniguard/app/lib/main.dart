@@ -1,19 +1,27 @@
 /// PURPOSE: Flutter mobile application entrypoint and root widget initialization.
-/// ROLE IN SYSTEM: Initializes MaterialApp, applies Quiet Vault theme, and mounts AppRouter.
-/// TALKS TO: app/lib/router.dart, app/lib/theme/quiet_vault_theme.dart
+/// ROLE IN SYSTEM: Initializes MaterialApp, applies Quiet Vault theme, loads config, and mounts AppRouter.
+/// TALKS TO: app/lib/router.dart, app/lib/theme/quiet_vault_theme.dart, app/lib/services/api_client.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaniguard/l10n/app_localizations.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/router.dart';
+import 'package:vaniguard/services/api_client.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await ApiClient.loadConfig();
   runApp(const VaniGuardApp());
 }
 
 class VaniGuardApp extends StatefulWidget {
   const VaniGuardApp({super.key});
+
+  static void setLocale(BuildContext context, Locale newLocale) {
+    final state = context.findAncestorStateOfType<_VaniGuardAppState>();
+    state?.switchLanguage(newLocale);
+  }
 
   @override
   State<VaniGuardApp> createState() => _VaniGuardAppState();
@@ -23,16 +31,36 @@ class _VaniGuardAppState extends State<VaniGuardApp> {
   ThemeMode _themeMode = ThemeMode.system;
   Locale _locale = const Locale('hi');
 
+  @override
+  void initState() {
+    super.initState();
+    _loadSavedLocale();
+  }
+
+  Future<void> _loadSavedLocale() async {
+    final prefs = await SharedPreferences.getInstance();
+    final lang = prefs.getString('app_language');
+    if (lang != null && (lang == 'en' || lang == 'hi')) {
+      if (mounted) {
+        setState(() {
+          _locale = Locale(lang);
+        });
+      }
+    }
+  }
+
   void toggleTheme() {
     setState(() {
       _themeMode = _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
     });
   }
 
-  void switchLanguage(Locale newLocale) {
+  void switchLanguage(Locale newLocale) async {
     setState(() {
       _locale = newLocale;
     });
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('app_language', newLocale.languageCode);
   }
 
   @override

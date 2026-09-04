@@ -2,6 +2,7 @@
 /// ROLE IN SYSTEM: Allows user to review and manage purpose-specific voice biometric consents.
 /// TALKS TO: app/lib/router.dart, app/lib/widgets/accessible_button.dart
 import 'package:flutter/material.dart';
+import 'package:vaniguard/main.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
 import 'package:vaniguard/widgets/accessible_button.dart';
 
@@ -58,6 +59,34 @@ class _ConsentsPrivacyScreenState extends State<ConsentsPrivacyScreen> {
         title: const Text("Privacy & Consents"),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Row(
+              children: [
+                ChoiceChip(
+                  label: const Text('EN', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  selected: Localizations.localeOf(context).languageCode == 'en',
+                  onSelected: (selected) {
+                    if (selected) {
+                      VaniGuardApp.setLocale(context, const Locale('en'));
+                    }
+                  },
+                ),
+                const SizedBox(width: 6),
+                ChoiceChip(
+                  label: const Text('HI', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  selected: Localizations.localeOf(context).languageCode == 'hi',
+                  onSelected: (selected) {
+                    if (selected) {
+                      VaniGuardApp.setLocale(context, const Locale('hi'));
+                    }
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(

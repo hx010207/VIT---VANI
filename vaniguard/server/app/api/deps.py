@@ -51,6 +51,22 @@ async def get_current_user(
 
     token = authorization.split("Bearer ")[1].strip()
 
+    from server.app.database import db
+    if token in db.revoked_tokens:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail={
+                "error": {
+                    "code": "REVOKED_TOKEN",
+                    "message": "Token has been revoked.",
+                    "user_message_hi": "सत्र समाप्त हो गया है। कृपया पुनः लॉग इन करें।",
+                    "user_message_en": "Session has been logged out. Please log in again.",
+                    "request_id": req_id
+                }
+            },
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+
     try:
         header = jwt.get_unverified_header(token)
         alg = header.get("alg", "HS256")
