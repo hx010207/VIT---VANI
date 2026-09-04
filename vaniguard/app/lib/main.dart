@@ -40,11 +40,20 @@ class _VaniGuardAppState extends State<VaniGuardApp> {
   Future<void> _loadSavedLocale() async {
     final prefs = await SharedPreferences.getInstance();
     final lang = prefs.getString('app_language');
-    if (lang != null && (lang == 'en' || lang == 'hi')) {
+    if (lang != null && ['en', 'hi', 'te', 'ta'].contains(lang)) {
       if (mounted) {
         setState(() {
           _locale = Locale(lang);
         });
+      }
+    } else {
+      final deviceLocale = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+      if (['en', 'hi', 'te', 'ta'].contains(deviceLocale)) {
+        if (mounted) {
+          setState(() {
+            _locale = Locale(deviceLocale);
+          });
+        }
       }
     }
   }
@@ -75,6 +84,8 @@ class _VaniGuardAppState extends State<VaniGuardApp> {
       supportedLocales: const [
         Locale('en', ''),
         Locale('hi', ''),
+        Locale('te', ''),
+        Locale('ta', ''),
       ],
       localizationsDelegates: const [
         AppLocalizations.delegate,

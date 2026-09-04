@@ -219,14 +219,19 @@ class QuietVaultTheme {
           borderSide: const BorderSide(color: QuietVaultColors.amberAccent, width: 2.0),
         ),
       ),
+      chipTheme: const ChipThemeData(
+        showCheckmark: false,
+        selectedColor: QuietVaultColors.amberAccent,
+        backgroundColor: Color(0xFF2C2C2C),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           minimumSize: const Size(minTouchTarget, minTouchTarget),
-          backgroundColor: QuietVaultColors.darkPrimary,
-          foregroundColor: QuietVaultColors.darkSurface,
+          backgroundColor: QuietVaultColors.amberAccent,
+          foregroundColor: Colors.black,
           elevation: 0,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+          textStyle: const TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
         ),
       ),
     );

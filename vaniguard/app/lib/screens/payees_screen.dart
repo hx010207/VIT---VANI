@@ -1,8 +1,10 @@
 /// PURPOSE: Beneficiary and Payee directory screen with search, verification badges, and direct transfer modal.
 /// ROLE IN SYSTEM: Allows account holders to search 100+ seeded contacts and initiate payments with Active Call Guard checks.
 /// TALKS TO: app/lib/services/api_client.dart, app/lib/screens/transfer_held_screen.dart
+import 'dart:convert';
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:vaniguard/l10n/app_localizations.dart';
 import 'package:vaniguard/services/api_client.dart';
 import 'package:vaniguard/theme/quiet_vault_theme.dart';
@@ -72,6 +74,104 @@ class _PayeesScreenState extends State<PayeesScreen> {
         }).toList();
       }
     });
+  }
+
+  void _showPayeeQrDialog(Map<String, dynamic> payee) {
+    final name = (payee['name'] ?? 'Payee').toString();
+    final payeeId = (payee['id'] ?? '44444444-4444-4444-4444-444444444444').toString();
+    final ref = (payee['account_ref'] ?? payee['masked_account'] ?? 'UPI Payee').toString();
+
+    final qrPayload = jsonEncode({
+      'v': 1,
+      'type': 'vaniguard_receive',
+      'account_id': payeeId,
+      'name': name,
+      'ref': ref,
+    });
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF1E1E1E),
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (ctx) {
+        return Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white24,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Receive QR Code',
+                style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: QuietVaultColors.textPrimary,
+                    ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'Scan from phone B to pay $name instantly',
+                style: const TextStyle(fontSize: 14, color: QuietVaultColors.textSecondary),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 20),
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: QuietVaultColors.amberAccent.withOpacity(0.35),
+                      blurRadius: 16,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                child: QrImageView(
+                  data: qrPayload,
+                  version: QrVersions.auto,
+                  size: 220.0,
+                  backgroundColor: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                name,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: QuietVaultColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                ref,
+                style: const TextStyle(fontSize: 14, color: QuietVaultColors.amberAccent),
+              ),
+              const SizedBox(height: 20),
+              AccessibleButton(
+                label: 'Close',
+                semanticsHint: 'Closes payee QR dialog',
+                isSecondary: true,
+                onPressed: () => Navigator.pop(ctx),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _openTransferModal(Map<String, dynamic> payee) {
@@ -276,6 +376,23 @@ class _PayeesScreenState extends State<PayeesScreen> {
           onPressed: () => Navigator.pop(context),
         ),
         actions: [
+          // Demo QR action for phone-to-phone testing
+          IconButton(
+            icon: const Icon(Icons.qr_code_2, color: QuietVaultColors.amberAccent),
+            tooltip: 'Show Demo QR (Rahul Sharma)',
+            onPressed: () {
+              final rahul = _allPayees.firstWhere(
+                (p) => (p['name'] ?? '').toString().toLowerCase().contains('rahul'),
+                orElse: () => {
+                  'id': '44444444-4444-4444-4444-444444444444',
+                  'name': 'Rahul Sharma',
+                  'account_ref': 'rahul.sharma@okaxis',
+                  'phone': '+919876543220',
+                },
+              );
+              _showPayeeQrDialog(Map<String, dynamic>.from(rahul));
+            },
+          ),
           // Active call guard simulation toggle
           IconButton(
             icon: Icon(
@@ -432,15 +549,26 @@ class _PayeesScreenState extends State<PayeesScreen> {
                                         color: QuietVaultColors.textSecondary,
                                       ),
                                     ),
-                                    trailing: ElevatedButton(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: QuietVaultColors.primary,
-                                        foregroundColor: Colors.black,
-                                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                                      ),
-                                      onPressed: () => _openTransferModal(p),
-                                      child: const Text('Pay', style: TextStyle(fontWeight: FontWeight.bold)),
+                                    trailing: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.qr_code_2, color: QuietVaultColors.amberAccent, size: 26),
+                                          tooltip: 'Show QR Code',
+                                          onPressed: () => _showPayeeQrDialog(p),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        ElevatedButton(
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor: QuietVaultColors.primary,
+                                            foregroundColor: Colors.black,
+                                            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                                          ),
+                                          onPressed: () => _openTransferModal(p),
+                                          child: const Text('Pay', style: TextStyle(fontWeight: FontWeight.bold)),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 );

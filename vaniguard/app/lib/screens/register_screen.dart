@@ -116,31 +116,36 @@ class _RegisterScreenState extends State<RegisterScreen> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Row(
               children: [
-                ChoiceChip(
-                  label: const Text('EN', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  selected: currentLang == 'en',
-                  onSelected: (selected) {
-                    if (selected) VaniGuardApp.setLocale(context, const Locale('en'));
-                  },
-                  selectedColor: QuietVaultColors.primary,
-                  backgroundColor: QuietVaultColors.surfaceAlt,
-                  labelStyle: TextStyle(
-                    color: currentLang == 'en' ? Colors.black : QuietVaultColors.textSecondary,
-                  ),
-                ),
-                const SizedBox(width: 6),
-                ChoiceChip(
-                  label: const Text('HI', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  selected: currentLang == 'hi',
-                  onSelected: (selected) {
-                    if (selected) VaniGuardApp.setLocale(context, const Locale('hi'));
-                  },
-                  selectedColor: QuietVaultColors.primary,
-                  backgroundColor: QuietVaultColors.surfaceAlt,
-                  labelStyle: TextStyle(
-                    color: currentLang == 'hi' ? Colors.black : QuietVaultColors.textSecondary,
-                  ),
-                ),
+                ...[
+                  {'code': 'en', 'label': 'EN'},
+                  {'code': 'hi', 'label': 'HI'},
+                  {'code': 'te', 'label': 'TE'},
+                  {'code': 'ta', 'label': 'TA'},
+                ].map((lang) {
+                  final isSel = currentLang == lang['code'];
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 6.0),
+                    child: ChoiceChip(
+                      label: Text(
+                        lang['label']!,
+                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                      ),
+                      selected: isSel,
+                      showCheckmark: false,
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      onSelected: (selected) {
+                        if (selected) {
+                          VaniGuardApp.setLocale(context, Locale(lang['code']!));
+                        }
+                      },
+                      selectedColor: QuietVaultColors.amberAccent,
+                      backgroundColor: const Color(0xFF2C2C2C),
+                      labelStyle: TextStyle(
+                        color: isSel ? Colors.black : QuietVaultColors.textSecondary,
+                      ),
+                    ),
+                  );
+                }),
               ],
             ),
           ),

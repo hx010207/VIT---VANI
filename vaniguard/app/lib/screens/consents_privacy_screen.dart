@@ -64,25 +64,27 @@ class _ConsentsPrivacyScreenState extends State<ConsentsPrivacyScreen> {
             padding: const EdgeInsets.only(right: 16.0),
             child: Row(
               children: [
-                ChoiceChip(
-                  label: const Text('EN', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  selected: Localizations.localeOf(context).languageCode == 'en',
-                  onSelected: (selected) {
-                    if (selected) {
-                      VaniGuardApp.setLocale(context, const Locale('en'));
-                    }
-                  },
-                ),
-                const SizedBox(width: 6),
-                ChoiceChip(
-                  label: const Text('HI', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                  selected: Localizations.localeOf(context).languageCode == 'hi',
-                  onSelected: (selected) {
-                    if (selected) {
-                      VaniGuardApp.setLocale(context, const Locale('hi'));
-                    }
-                  },
-                ),
+                ...[
+                  {'code': 'en', 'label': 'EN'},
+                  {'code': 'hi', 'label': 'HI'},
+                  {'code': 'te', 'label': 'TE'},
+                  {'code': 'ta', 'label': 'TA'},
+                ].map((lang) {
+                  final isSel = Localizations.localeOf(context).languageCode == lang['code'];
+                  return Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: ChoiceChip(
+                      label: Text(lang['label']!, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                      selected: isSel,
+                      showCheckmark: false,
+                      onSelected: (selected) {
+                        if (selected) {
+                          VaniGuardApp.setLocale(context, Locale(lang['code']!));
+                        }
+                      },
+                    ),
+                  );
+                }),
               ],
             ),
           ),

@@ -21,6 +21,7 @@ venv/
 huggingface/
 torch/
 !**/app/models/**
+**/__pycache__/**
 
 # Audio temp and recordings
 *.wav

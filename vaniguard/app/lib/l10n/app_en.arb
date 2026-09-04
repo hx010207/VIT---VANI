@@ -91,6 +91,12 @@
   "mobileRecharge": "Mobile Recharge",
   "payBill": "Pay Bill",
   "activeCallWarning": "Active Phone Call Detected",
-  "activeCallDesc": "For your security, transactions during active calls require extra verification."
+  "activeCallDesc": "For your security, transactions during active calls require extra verification.",
+  "nfcTapTitle": "NFC Tap & Pay",
+  "nfcTapPrompt": "Card read: {name}. Say the amount to pay.",
+  "nfcUnrecognized": "Unrecognized card",
+  "nfcSuccess": "Paid {amount} rupees to {name}.",
+  "nfcHeld": "Payment held for safety. Your guardian has been notified.",
+  "programCardTitle": "Program NFC Card"
 }
 

@@ -22,6 +22,9 @@ dependencies:
   record: ^5.2.0
   shared_preferences: ^2.3.2
   local_auth: ^2.3.0
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^7.4.0
+  nfc_manager: ^4.2.1
 
 dependency_overrides:
   record_android: 1.3.3
@@ -45,3 +48,4 @@ flutter:
   generate: true
   assets:
     - assets/branding/vaniguard_logo.png
+    - assets/branding/vaniguard_logo_transparent.png

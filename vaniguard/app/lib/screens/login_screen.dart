@@ -1,6 +1,7 @@
 /// PURPOSE: Primary authentication screen with phone/account login, biometric option, and VaniGuard branding.
 /// ROLE IN SYSTEM: Gateway authentication screen presenting the VaniGuard logo, credential inputs, language toggle, and biometrics.
 /// TALKS TO: app/lib/l10n/app_localizations.dart, app/lib/router.dart, app/lib/services/api_client.dart, app/lib/services/biometric_service.dart, app/lib/theme/quiet_vault_theme.dart, app/lib/widgets/accessible_button.dart
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vaniguard/l10n/app_localizations.dart';
@@ -118,12 +119,36 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       if (mounted) {
+        String errorMessage = 'Could not connect to server. Please check your network.';
+        if (e is DioException) {
+          final data = e.response?.data;
+          if (data is Map) {
+            if (data['error_description'] != null) {
+              errorMessage = data['error_description'].toString();
+            } else if (data['detail'] != null) {
+              errorMessage = data['detail'].toString();
+            } else if (data['message'] != null) {
+              errorMessage = data['message'].toString();
+            } else if (data['error'] != null) {
+              errorMessage = data['error'].toString();
+            }
+          } else if (e.response?.statusCode == 400 || e.response?.statusCode == 401) {
+            errorMessage = 'Invalid phone number or password.';
+          } else if (e.message != null && e.message!.isNotEmpty) {
+            errorMessage = e.message!;
+          }
+        } else {
+          errorMessage = e.toString();
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Sign in failed: ${e.toString().contains("401") ? "Invalid credentials" : "Could not connect to server"}',
+              'Sign in failed: $errorMessage',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
             ),
             backgroundColor: QuietVaultColors.danger,
+            duration: const Duration(seconds: 4),
           ),
         );
       }
@@ -264,37 +289,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.tune_rounded, color: QuietVaultColors.textSecondary),
+                    icon: const Icon(Icons.tune_rounded, color: QuietVaultColors.amberAccent),
                     tooltip: l10n?.serverConfig ?? 'Server Configuration',
                     onPressed: _showServerConfigModal,
                   ),
                   Row(
                     children: [
-                      ChoiceChip(
-                        label: const Text('EN', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                        selected: currentLang == 'en',
-                        onSelected: (selected) {
-                          if (selected) VaniGuardApp.setLocale(context, const Locale('en'));
-                        },
-                        selectedColor: QuietVaultColors.primary,
-                        backgroundColor: QuietVaultColors.surfaceAlt,
-                        labelStyle: TextStyle(
-                          color: currentLang == 'en' ? Colors.black : QuietVaultColors.textSecondary,
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      ChoiceChip(
-                        label: const Text('HI', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                        selected: currentLang == 'hi',
-                        onSelected: (selected) {
-                          if (selected) VaniGuardApp.setLocale(context, const Locale('hi'));
-                        },
-                        selectedColor: QuietVaultColors.primary,
-                        backgroundColor: QuietVaultColors.surfaceAlt,
-                        labelStyle: TextStyle(
-                          color: currentLang == 'hi' ? Colors.black : QuietVaultColors.textSecondary,
-                        ),
-                      ),
+                      ...[
+                        {'code': 'en', 'label': 'EN'},
+                        {'code': 'hi', 'label': 'HI'},
+                        {'code': 'te', 'label': 'TE'},
+                        {'code': 'ta', 'label': 'TA'},
+                      ].map((lang) {
+                        final isSel = currentLang == lang['code'];
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 6.0),
+                          child: ChoiceChip(
+                            label: Text(
+                              lang['label']!,
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                            ),
+                            selected: isSel,
+                            showCheckmark: false,
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            onSelected: (selected) {
+                              if (selected) {
+                                VaniGuardApp.setLocale(context, Locale(lang['code']!));
+                              }
+                            },
+                            selectedColor: QuietVaultColors.amberAccent,
+                            backgroundColor: const Color(0xFF2C2C2C),
+                            labelStyle: TextStyle(
+                              color: isSel ? Colors.black : QuietVaultColors.textPrimary,
+                            ),
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ],
@@ -304,7 +334,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Branding
               Center(
                 child: Image.asset(
-                  'assets/branding/vaniguard_logo.png',
+                  'assets/branding/vaniguard_logo_transparent.png',
                   width: 100,
                   height: 100,
                   fit: BoxFit.contain,
@@ -427,14 +457,20 @@ class _LoginScreenState extends State<LoginScreen> {
 
               // New user register link
               Center(
-                child: TextButton(
-                  onPressed: () => Navigator.pushNamed(context, '/register'),
-                  child: Text(
-                    l10n?.newUserRegister ?? 'New user? Create account',
-                    style: const TextStyle(
-                      color: QuietVaultColors.primary,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 6.0),
+                  child: TextButton(
+                    onPressed: () => Navigator.pushNamed(context, '/register'),
+                    child: Text(
+                      l10n?.newUserRegister ?? 'New user? Create account',
+                      style: const TextStyle(
+                        color: QuietVaultColors.amberAccent,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.5,
+                        decoration: TextDecoration.underline,
+                        decorationColor: QuietVaultColors.amberAccent,
+                      ),
                     ),
                   ),
                 ),

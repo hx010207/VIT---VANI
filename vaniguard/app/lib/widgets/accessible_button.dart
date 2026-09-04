@@ -24,15 +24,16 @@ class AccessibleButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color backgroundColor = QuietVaultColors.primary;
-    Color foregroundColor = QuietVaultColors.surface;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    Color backgroundColor = isDark ? QuietVaultColors.amberAccent : QuietVaultColors.primary;
+    Color foregroundColor = isDark ? Colors.black : QuietVaultColors.surface;
 
     if (isDanger) {
       backgroundColor = QuietVaultColors.danger;
-      foregroundColor = QuietVaultColors.surface;
+      foregroundColor = Colors.white;
     } else if (isSecondary) {
-      backgroundColor = QuietVaultColors.surfaceAlt;
-      foregroundColor = QuietVaultColors.ink;
+      backgroundColor = isDark ? const Color(0xFF2C2C2C) : QuietVaultColors.surfaceAlt;
+      foregroundColor = isDark ? QuietVaultColors.textPrimary : QuietVaultColors.ink;
     }
 
     return Semantics(
@@ -56,7 +57,12 @@ class AccessibleButton extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
                 side: isSecondary
-                    ? const BorderSide(color: QuietVaultColors.inkSecondary, width: 1.5)
+                    ? BorderSide(
+                        color: isDark
+                            ? QuietVaultColors.amberAccent.withOpacity(0.5)
+                            : QuietVaultColors.inkSecondary,
+                        width: 1.5,
+                      )
                     : BorderSide.none,
               ),
             ),

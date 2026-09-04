@@ -20,7 +20,11 @@ class ApiClient {
   static Dio? _dio;
 
   static void configure({required String baseUrl, String? token}) {
-    _baseUrl = baseUrl.trim().replaceAll(RegExp(r'/+$'), '');
+    var cleanUrl = baseUrl.trim().replaceAll(RegExp(r'/+$'), '');
+    if (cleanUrl.contains('qqfexpzwctwtbjirsvh')) {
+      cleanUrl = cleanUrl.replaceAll('qqfexpzwctwtbjirsvh', 'qqfexpzwzctwtbjirsvh');
+    }
+    _baseUrl = cleanUrl;
     _authToken = token;
     _dio = null; // Reset to pick up new config
   }
@@ -65,28 +69,34 @@ class ApiClient {
     return _dio!;
   }
 
-  /// Maps a raw phone number to a deterministic Supabase demo or user email.
+  /// Maps a raw phone number or email to a deterministic Supabase demo or user email.
   static String phoneToEmail(String rawPhone) {
-    final clean = rawPhone.replaceAll(RegExp(r'[^\d+]'), '');
+    final trimmed = rawPhone.trim();
+    if (trimmed.contains('@')) {
+      return trimmed.toLowerCase();
+    }
+    final clean = trimmed.replaceAll(RegExp(r'[^\d+]'), '');
     if (clean.contains('9876543210')) return 'asha@vaniguard.org';
     if (clean.contains('9876543211')) return 'priya@vaniguard.org';
     final digits = clean.replaceAll('+', '');
+    if (digits.length == 10) {
+      return '91$digits@vaniguard.org';
+    }
     return '$digits@vaniguard.org';
   }
 
   // ---- Health Check ----
   static Future<Map<String, dynamic>> healthCheck() async {
     if (isSupabase) {
-      try {
-        final resp = await dio.get(
-          '$_baseUrl/rest/v1/users',
-          queryParameters: {'select': 'count', 'limit': '1'},
-          options: Options(headers: {'apikey': _supabaseAnonKey}),
-        );
+      final resp = await dio.get(
+        '$_baseUrl/rest/v1/users',
+        queryParameters: {'select': 'count', 'limit': '1'},
+        options: Options(headers: {'apikey': _supabaseAnonKey}),
+      );
+      if (resp.statusCode == 200 || resp.statusCode == 206) {
         return {'status': 'healthy', 'provider': 'supabase', 'code': resp.statusCode};
-      } catch (e) {
-        return {'status': 'connected', 'provider': 'supabase', 'note': e.toString()};
       }
+      throw Exception('Server returned status code ${resp.statusCode}');
     } else {
       final resp = await dio.get('/health');
       return resp.data as Map<String, dynamic>;
@@ -117,10 +127,16 @@ class ApiClient {
         }),
       );
 
-      final data = resp.data as Map<String, dynamic>;
+      final rawData = resp.data;
+      final Map<String, dynamic> data = rawData is Map
+          ? Map<String, dynamic>.from(rawData)
+          : jsonDecode(rawData.toString()) as Map<String, dynamic>;
+
       final accessToken = data['access_token'] as String;
-      final user = data['user'] as Map<String, dynamic>;
-      final userId = user['id'] as String;
+      final user = data['user'] is Map
+          ? Map<String, dynamic>.from(data['user'] as Map)
+          : <String, dynamic>{};
+      final userId = (user['id'] ?? '').toString();
 
       setToken(accessToken);
       setUserId(userId);
@@ -140,7 +156,10 @@ class ApiClient {
           }),
         );
         if (profileResp.data is List && (profileResp.data as List).isNotEmpty) {
-          profile = (profileResp.data as List).first as Map<String, dynamic>;
+          final first = (profileResp.data as List).first;
+          if (first is Map) {
+            profile = Map<String, dynamic>.from(first);
+          }
         }
       } catch (_) {}
 
@@ -168,7 +187,8 @@ class ApiClient {
         'token': accessToken,
         'user_id': userId,
         'phone': profile?['phone'] ?? phone,
-        'full_name': profile?['full_name'] ?? (email.contains('priya') ? 'Priya Sharma (Guardian)' : 'Asha Patel (Elderly)'),
+        'full_name': profile?['full_name'] ??
+            (email.contains('priya') ? 'Priya Sharma (Guardian)' : 'Asha Sharma (Elder)'),
         'guardian_mode': profile?['guardian_mode'] ?? (email.contains('asha')),
         'guardian_name': guardianName,
       };
@@ -713,13 +733,93 @@ class ApiClient {
     }
   }
 
+  // ---- Recent Transactions ----
+  static Future<List<Map<String, dynamic>>> getRecentTransactions({int limit = 5}) async {
+    if (isSupabase) {
+      try {
+        final resp = await dio.get(
+          '$_baseUrl/rest/v1/transfers',
+          queryParameters: {
+            if (_currentUserId != null) 'user_id': 'eq.$_currentUserId',
+            'order': 'created_at.desc',
+            'limit': '$limit',
+            'select': 'id,amount_paise,state,risk_band,created_at,payee_id',
+          },
+          options: Options(headers: {
+            'apikey': _supabaseAnonKey,
+            if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+          }),
+        );
+
+        final List rawList = resp.data is List ? (resp.data as List) : [];
+        if (rawList.isEmpty) return [];
+
+        // Fetch payees map to resolve payee names
+        Map<String, String> payeeNames = {};
+        try {
+          final payeesResp = await dio.get(
+            '$_baseUrl/rest/v1/payees',
+            queryParameters: {'select': 'id,name,nickname'},
+            options: Options(headers: {
+              'apikey': _supabaseAnonKey,
+              if (_authToken != null) 'Authorization': 'Bearer $_authToken',
+            }),
+          );
+          if (payeesResp.data is List) {
+            for (final p in payeesResp.data as List) {
+              if (p is Map && p['id'] != null) {
+                payeeNames[p['id'].toString()] =
+                    (p['nickname'] ?? p['name'] ?? 'Payee').toString();
+              }
+            }
+          }
+        } catch (_) {}
+
+        return rawList.map((item) {
+          final m = Map<String, dynamic>.from(item as Map);
+          final pId = m['payee_id']?.toString() ?? '';
+          m['payee_name'] = payeeNames[pId] ??
+              (pId.contains('4444') ? 'Son Rahul (Groceries)' : 'Verified Payee');
+          return m;
+        }).toList();
+      } catch (_) {
+        return [];
+      }
+    } else {
+      try {
+        final resp = await dio.get('/transactions', queryParameters: {
+          if (_currentUserId != null) 'user_id': _currentUserId,
+          'limit': limit,
+        });
+        final raw = resp.data;
+        if (raw is Map && raw['items'] is List) {
+          return (raw['items'] as List)
+              .map((x) => Map<String, dynamic>.from(x as Map))
+              .toList();
+        }
+        return [];
+      } catch (_) {
+        return [];
+      }
+    }
+  }
+
   static Future<void> loadConfig() async {
     final prefs = await SharedPreferences.getInstance();
     final savedUrl = prefs.getString('api_base_url');
-    if (savedUrl != null && savedUrl.isNotEmpty) {
-      _baseUrl = savedUrl;
+    if (savedUrl != null &&
+        savedUrl.isNotEmpty &&
+        !savedUrl.contains('127.0.0.1') &&
+        !savedUrl.contains('localhost') &&
+        !savedUrl.contains('10.0.2.2')) {
+      var clean = savedUrl.trim().replaceAll(RegExp(r'/+$'), '');
+      if (clean.contains('qqfexpzwctwtbjirsvh')) {
+        clean = clean.replaceAll('qqfexpzwctwtbjirsvh', 'qqfexpzwzctwtbjirsvh');
+      }
+      _baseUrl = clean;
     } else {
       _baseUrl = defaultBaseUrl;
+      await prefs.setString('api_base_url', defaultBaseUrl);
     }
     _authToken = prefs.getString('auth_token');
     _currentUserId = prefs.getString('user_id');

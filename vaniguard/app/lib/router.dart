@@ -16,6 +16,7 @@ import 'package:vaniguard/screens/consents_privacy_screen.dart';
 import 'package:vaniguard/screens/payees_screen.dart';
 import 'package:vaniguard/screens/qr_scan_screen.dart';
 import 'package:vaniguard/screens/pay_bills_screen.dart';
+import 'package:vaniguard/screens/program_nfc_card_screen.dart';
 
 class AppRouter {
   static Route<dynamic> generateRoute(RouteSettings settings) {
@@ -49,6 +50,8 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const TrustedContactPortalScreen());
       case "/consents":
         return MaterialPageRoute(builder: (_) => const ConsentsPrivacyScreen());
+      case "/program-card":
+        return MaterialPageRoute(builder: (_) => const ProgramNfcCardScreen());
       default:
         return MaterialPageRoute(
           builder: (_) => Scaffold(

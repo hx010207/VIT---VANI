@@ -1,6 +1,6 @@
-/// PURPOSE: In-app localization delegate and string resolution for English and Hindi.
+/// PURPOSE: In-app localization delegate and string resolution for English, Hindi, Telugu, and Tamil.
 /// ROLE IN SYSTEM: Provides localized UI strings to widgets adhering to the multilingual specification.
-/// TALKS TO: app/lib/l10n/app_en.arb, app/lib/l10n/app_hi.arb, all UI screens
+/// TALKS TO: app/lib/l10n/app_en.arb, app/lib/l10n/app_hi.arb, app/lib/l10n/app_te.arb, app/lib/l10n/app_ta.arb, all UI screens
 import 'package:flutter/widgets.dart';
 
 class AppLocalizations {
@@ -68,6 +68,12 @@ class AppLocalizations {
       'payBill': 'Pay Bill',
       'activeCallWarning': 'Active Phone Call Detected',
       'activeCallDesc': 'For your security, transactions during active calls require extra verification.',
+      'nfcTapTitle': 'NFC Tap & Pay',
+      'nfcTapPrompt': 'Card read: {name}. Say the amount to pay.',
+      'nfcUnrecognized': 'Unrecognized card',
+      'nfcSuccess': 'Paid {amount} rupees to {name}.',
+      'nfcHeld': 'Payment held for safety. Your guardian has been notified.',
+      'programCardTitle': 'Program NFC Card',
     },
     'hi': {
       'appTitle': 'वानीगार्ड',
@@ -85,7 +91,7 @@ class AppLocalizations {
       'demoGuardianHint': 'संरक्षक डेमो खाते के विवरण स्वतः भरें',
       'guardianAlertTitle': 'गार्जियन अलर्ट: कार्रवाई आवश्यक',
       'guardianAlertSubtitle': 'वरिष्ठ नागरिक की सुरक्षा के लिए ट्रांसफर रोका गया है। समीक्षा के लिए टैप करें।',
-      'voiceNavTitle': 'आवाज नेविगेशन',
+      'voiceNavTitle': 'आवाज नेविгона',
       'voiceNavHint': 'नेविगेशन या भुगतान आदेश बोलने के लिए टैप करें',
       'savingsAccount': 'प्राथमिक बचत खाता',
       'profile': 'उपयोगकर्ता प्रोफ़ाइल',
@@ -123,6 +129,134 @@ class AppLocalizations {
       'payBill': 'बिल भरें',
       'activeCallWarning': 'सक्रिय फ़ोन कॉल का पता चला',
       'activeCallDesc': 'आपकी सुरक्षा के लिए, सक्रिय कॉल के दौरान लेनदेन के लिए अतिरिक्त सत्यापन आवश्यक है।',
+      'nfcTapTitle': 'एनएफसी टैप और भुगतान',
+      'nfcTapPrompt': 'कार्ड पढ़ा गया: {name}। भुगतान राशि बोलें।',
+      'nfcUnrecognized': 'अपरिचित कार्ड',
+      'nfcSuccess': '{name} को {amount} रुपये भुगतान किए गए।',
+      'nfcHeld': 'सुरक्षा के लिए भुगतान रोका गया। आपके अभिभावक को सूचित कर दिया गया है।',
+      'programCardTitle': 'एनएफसी कार्ड प्रोग्राम करें',
+    },
+    'te': {
+      'appTitle': 'వాణిగార్డ్',
+      'loginTitle': 'సురక్షిత వాయిస్ బ్యాంకింగ్',
+      'phoneOrAccount': 'ఫోన్ నంబర్ లేదా ఖాతా ID',
+      'password': 'పాస్‌వర్డ్',
+      'loginButton': 'సైన్ ఇన్',
+      'loginButtonHint': 'మీ బ్యాంకింగ్ సెషన్‌ను ధృవీకరించడానికి వివరాలను సమర్పించండి',
+      'biometricLogin': 'బయోమెట్రిక్స్‌తో అన్‌లాక్ చేయండి',
+      'demoLogin': 'త్వరిత డెమో సైన్ ఇన్',
+      'demoLoginHint': 'పరీక్ష కోసం డెమో ఆధారాలతో వెంటనే సైన్ ఇన్ చేయండి',
+      'demoElder': 'Demo: Elder',
+      'demoElderHint': 'సీనియర్ సిటిజెన్ డెమో ఖాతా వివరాలను స్వయంచాలకంగా పూరించండి',
+      'demoGuardian': 'Demo: Guardian',
+      'demoGuardianHint': 'సంరక్షక డెమో ఖాతా వివరాలను స్వయంచాలకంగా పూరించండి',
+      'guardianAlertTitle': 'గార్డియన్ అలర్ట్: చర్య అవసరం',
+      'guardianAlertSubtitle': 'పెద్దల భద్రత కోసం బదిలీ నిలిపివేయబడింది. సమీక్షించడానికి నొక్కండి.',
+      'voiceNavTitle': 'వాయిస్ నావిగేషన్',
+      'voiceNavHint': 'నావిగేషన్ లేదా చెల్లింపు ఆదేశాలు మాట్లాడటానికి నొక్కండి',
+      'savingsAccount': 'ప్రాథమిక పొదుపు ఖాతా',
+      'profile': 'వినియోగదారు ప్రొఫైల్',
+      'voiceBanking': 'వాయిస్ బ్యాంకింగ్',
+      'listening': 'వింటున్నాము...',
+      'newUserRegister': 'కొత్త వినియోగదారులా? ఖాతాను సృష్టించండి',
+      'registerTitle': 'ఖాతాను సృష్టించండి',
+      'registerSubtitle': 'వాణిగార్డ్ వాయిస్-రక్షిత బ్యాంకింగ్‌లో చేరండి',
+      'fullName': 'పూర్తి పేరు',
+      'confirmPassword': 'పాస్‌వర్డ్‌ను నిర్ధారించండి',
+      'guardianModeOption': 'గార్డియన్ మోడ్‌ను ప్రారంభించండి',
+      'guardianModeDesc': '30 నిమిషాల కూలింగ్ విండో మరియు హెచ్చరికలతో బదిలీలను రక్షించడానికి విశ్వసనీయ కుటుంబ సభ్యుడిని నియమించండి.',
+      'guardianPhone': 'సంరక్షకుడి ఫోన్ (+91)',
+      'relationship': 'సంబంధం',
+      'son': 'కుమారుడు',
+      'daughter': 'కుమార్తె',
+      'caregiver': 'సంరక్షకుడు',
+      'createAccountButton': 'నమోదు చేసుకోండి',
+      'alreadyAccount': 'ఇప్పటికే ఖాతా ఉందా? సైన్ ఇన్ చేయండి',
+      'serverConfig': 'సర్వర్ కాన్ఫిగరేషన్',
+      'serverConfigHint': 'API బేస్ URL ను మార్చండి లేదా కనెక్టివిటీని పరీక్షించండి',
+      'useBiometrics': 'బయోమెట్రిక్స్‌తో సైన్ ఇన్ చేయండి',
+      'usePassword': 'బదులుగా పాస్‌వర్డ్‌ను ఉపయోగించండి',
+      'testConnection': 'కనెక్షన్ పరీక్షించండి',
+      'payeesTitle': 'లబ్ధిదారులు & చెల్లింపుదారులు',
+      'searchPayees': 'పేరు లేదా UPI ద్వారా లబ్ధిదారులను శోధించండి',
+      'verifiedPayee': 'ధృవీకరించబడిన లబ్ధిదారుడు',
+      'unverifiedPayee': 'ధృవీకరించబడని లబ్ధిదారుడు',
+      'qrScanTitle': 'UPI QR కోడ్‌ను స్కాన్ చేయండి',
+      'billsTitle': 'బిల్లు చెల్లింపులు',
+      'electricity': 'విద్యుత్ బిల్లు',
+      'water': 'నీటి బిల్లు',
+      'gas': 'గ్యాస్ సిలిండర్',
+      'mobileRecharge': 'మొబైల్ రీఛార్జ్',
+      'payBill': 'బిల్లు చెల్లించండి',
+      'activeCallWarning': 'కాల్ యాక్టివ్‌గా ఉన్నట్లు గుర్తించబడింది',
+      'activeCallDesc': 'మీ భద్రత కోసం, యాక్టివ్ కాల్స్ సమయంలో లావాదేవీలకు అదనపు ధృవీకరణ అవసరం.',
+      'nfcTapTitle': 'NFC ట్యాప్ & పే',
+      'nfcTapPrompt': 'కార్డు చదవబడింది: {name}. చెల్లించాల్సిన మొత్తాన్ని చెప్పండి.',
+      'nfcUnrecognized': 'గుర్తించబడని కార్డు',
+      'nfcSuccess': '{name} కి {amount} రూపాయలు చెల్లించబడ్డాయి.',
+      'nfcHeld': 'భద్రత కోసం చెల్లింపు నిలిపివేయబడింది. మీ సంరక్షకుడికి సమాచారం అందించబడింది.',
+      'programCardTitle': 'NFC కార్డు ప్రోగ్రామ్ చేయండి',
+    },
+    'ta': {
+      'appTitle': 'வாணிகார்ட்',
+      'loginTitle': 'பாதுகாப்பான குரல் வங்கி சேவை',
+      'phoneOrAccount': 'தொலைபேசி எண் அல்லது கணக்கு எண்',
+      'password': 'கடவுச்சொல்',
+      'loginButton': 'உள்நுழைய',
+      'loginButtonHint': 'உங்கள் வங்கி அமர்வை அங்கீகரிக்க விவரங்களைச் சமர்ப்பிக்கவும்',
+      'biometricLogin': 'பயோமெட்ரிக்ஸ் மூலம் திறக்கவும்',
+      'demoLogin': 'விரைவு டெமோ உள்நுழைவு',
+      'demoLoginHint': 'சோதனைக்காக டெமோ விவரங்களுடன் உடனடியாக உள்நுழையவும்',
+      'demoElder': 'Demo: Elder',
+      'demoElderHint': 'மூத்த குடிமக்கள் டெமோ கணக்கு விவரங்களைத் தானாக நிரப்பவும்',
+      'demoGuardian': 'Demo: Guardian',
+      'demoGuardianHint': 'பாதுகாவலர் டெமோ கணக்கு விவரங்களைத் தானாக நிரப்பவும்',
+      'guardianAlertTitle': 'பாதுகாவலர் எச்சரிக்கை: நடவடிக்கை தேவை',
+      'guardianAlertSubtitle': 'பெரியவர்களின் பாதுகாப்பிற்காக பரிமாற்றம் நிறுத்தி வைக்கப்பட்டுள்ளது. பார்க்க தட்டவும்.',
+      'voiceNavTitle': 'குரல் வழிசெலுத்தல்',
+      'voiceNavHint': 'வழிசெலுத்தல் அல்லது கட்டணக் கட்டளைகளைப் பேச தட்டவும்',
+      'savingsAccount': 'முதன்மை சேமிப்புக் கணக்கு',
+      'profile': 'பயனர் சுயவிவரம்',
+      'voiceBanking': 'குரல் வங்கி சேவை',
+      'listening': 'கேட்கிறது...',
+      'newUserRegister': 'புதிய பயனரா? கணக்கை உருவாக்கவும்',
+      'registerTitle': 'கணக்கை உருவாக்கவும்',
+      'registerSubtitle': 'வாணிகார்ட் குரல்-பாதுகாக்கப்பட்ட வங்கியில் இணையுங்கள்',
+      'fullName': 'முழு பெயர்',
+      'confirmPassword': 'கடவுச்சொல்லை உறுதிப்படுத்தவும்',
+      'guardianModeOption': 'பாதுகாவலர் பயன்முறையை இயக்கவும்',
+      'guardianModeDesc': '30 நிமிட காலக்கெடு மற்றும் எச்சரிக்கைகளுடன் பரிமாற்றங்களைப் பாதுகாக்க நம்பகமான குடும்ப உறுப்பினரை நியமிக்கவும்.',
+      'guardianPhone': 'பாதுகாவலர் தொலைபேசி (+91)',
+      'relationship': 'உறவுமுறை',
+      'son': 'மகன்',
+      'daughter': 'மகள்',
+      'caregiver': 'பராமரிப்பாளர்',
+      'createAccountButton': 'பதிவு செய்யவும்',
+      'alreadyAccount': 'ஏற்கனவே கணக்கு உள்ளதா? உள்நுழையவும்',
+      'serverConfig': 'சர்வர் உள்ளமைவு',
+      'serverConfigHint': 'API தள URL-ஐ மாற்றவும் அல்லது இணைப்பைச் சோதிக்கவும்',
+      'useBiometrics': 'பயோமெட்ரிக்ஸ் மூலம் உள்நுழையவும்',
+      'usePassword': 'அதற்குப் பதிலாக கடவுச்சொல்லைப் பயன்படுத்தவும்',
+      'testConnection': 'இணைப்பைச் சோதிக்கவும்',
+      'payeesTitle': 'பயனாளிகள் மற்றும் பணம் பெறுபவர்கள்',
+      'searchPayees': 'பெயர் அல்லது UPI மூலம் பயனாளிகளைத் தேடவும்',
+      'verifiedPayee': 'சரிபார்க்கப்பட்ட பயனாளி',
+      'unverifiedPayee': 'சரிபார்க்கப்படாத பயனாளி',
+      'qrScanTitle': 'UPI QR குறியீட்டை ஸ்கேன் செய்யவும்',
+      'billsTitle': 'கட்டணங்கள் செலுத்துதல்',
+      'electricity': 'மின்சாரக் கட்டணம்',
+      'water': 'குடிநீர்க் கட்டணம்',
+      'gas': 'எரிவாயு சிலிண்டர்',
+      'mobileRecharge': 'மொபைல் ரீசார்ஜ்',
+      'payBill': 'கட்டணம் செலுத்தவும்',
+      'activeCallWarning': 'செயலில் உள்ள அழைப்பு கண்டறியப்பட்டது',
+      'activeCallDesc': 'உங்கள் பாதுகாப்பிற்காக, அழைப்பின் போது நடக்கும் பரிவர்த்தனைகளுக்கு கூடுதல் சரிபார்ப்பு தேவை.',
+      'nfcTapTitle': 'NFC தட்டவும் & செலுத்தவும்',
+      'nfcTapPrompt': 'அட்டை படிக்கப்பட்டது: {name}. செலுத்த வேண்டிய தொகையைக் கூறவும்.',
+      'nfcUnrecognized': 'அடையாளம் தெரியாத அட்டை',
+      'nfcSuccess': '{name} க்கு {amount} ரூபாய் செலுத்தப்பட்டது.',
+      'nfcHeld': 'பாதுகாப்பிற்காக பணம் நிறுத்தி வைக்கப்பட்டது. உங்கள் பாதுகாவலருக்கு தெரிவிக்கப்பட்டுள்ளது.',
+      'programCardTitle': 'NFC அட்டையை நிரல் செய்யவும்',
     },
   };
 
@@ -179,13 +313,19 @@ class AppLocalizations {
   String get payBill => _localizedValues[locale.languageCode]?['payBill'] ?? 'Pay Bill';
   String get activeCallWarning => _localizedValues[locale.languageCode]?['activeCallWarning'] ?? 'Active Phone Call Detected';
   String get activeCallDesc => _localizedValues[locale.languageCode]?['activeCallDesc'] ?? 'For your security, transactions during active calls require extra verification.';
+  String get nfcTapTitle => _localizedValues[locale.languageCode]?['nfcTapTitle'] ?? 'NFC Tap & Pay';
+  String get nfcTapPrompt => _localizedValues[locale.languageCode]?['nfcTapPrompt'] ?? 'Card read: {name}. Say the amount to pay.';
+  String get nfcUnrecognized => _localizedValues[locale.languageCode]?['nfcUnrecognized'] ?? 'Unrecognized card';
+  String get nfcSuccess => _localizedValues[locale.languageCode]?['nfcSuccess'] ?? 'Paid {amount} rupees to {name}.';
+  String get nfcHeld => _localizedValues[locale.languageCode]?['nfcHeld'] ?? 'Payment held for safety. Your guardian has been notified.';
+  String get programCardTitle => _localizedValues[locale.languageCode]?['programCardTitle'] ?? 'Program NFC Card';
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
   const _AppLocalizationsDelegate();
 
   @override
-  bool isSupported(Locale locale) => ['en', 'hi'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => ['en', 'hi', 'te', 'ta'].contains(locale.languageCode);
 
   @override
   Future<AppLocalizations> load(Locale locale) async => AppLocalizations(locale);
