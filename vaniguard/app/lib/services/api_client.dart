@@ -9,8 +9,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient {
-  // Publicly accessible live backend tunnel
-  static const String defaultBaseUrl = 'https://97b7543e936c3f.lhr.life';
+  // Hosted Supabase 24/7 backend by default for real device testing without local tunnels
+  static const String defaultBaseUrl = 'https://qqfexpzwzctwtbjirsvh.supabase.co';
   static const String fallbackSupabaseUrl = 'https://qqfexpzwzctwtbjirsvh.supabase.co';
   static const String _supabaseAnonKey =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFxZmV4cHp3emN0d3Riamlyc3ZoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg0Mzg5OTMsImV4cCI6MjEwNDAxNDk5M30.16jjPcIezKPoql8yJVFxgjLy1aZ0y7RJuv-qIZxqSh4';
